@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Quản lý Thư viện</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-body">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-circle small">TV</div>
+      <div>
+        <strong>Thư viện</strong>
+        <span>Quản lý hệ thống</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="home">
+        <span class="nav-icon">📊</span> Tổng quan
+      </a>
+      <a href="#" class="nav-item" data-section="books">
+        <span class="nav-icon">📚</span> Quản lý sách
+      </a>
+      <a href="#" class="nav-item" data-section="readers">
+        <span class="nav-icon">👥</span> Quản lý độc giả
+      </a>
+      <a href="#" class="nav-item" data-section="borrows">
+        <span class="nav-icon">🔁</span> Mượn / Trả sách
+      </a>
+      <a href="#" class="nav-item" data-section="categories">
+        <span class="nav-icon">🏷️</span> Thể loại
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Đăng xuất
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle" aria-label="Mở/đóng menu">☰</button>
+      <h2 class="topbar-title" id="pageTitle">Tổng quan</h2>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <input type="text" id="globalSearch" placeholder="Tìm kiếm nhanh...">
+          <span>🔍</span>
+        </div>
+        <div class="user-box">
+          <div class="avatar">A</div>
+          <div>
+            <strong>Admin</strong>
+            <span>Quản trị viên</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ================= TỔNG QUAN ================= -->
+      <section id="section-home" class="page-section active">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon bg-blue">📚</div>
+            <div>
+              <p>Tổng số sách</p>
+              <h3 id="statBooks">0</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-green">👥</div>
+            <div>
+              <p>Độc giả</p>
+              <h3 id="statReaders">0</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-orange">🔁</div>
+            <div>
+              <p>Đang mượn</p>
+              <h3 id="statBorrowing">0</h3>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-red">⏰</div>
+            <div>
+              <p>Quá hạn</p>
+              <h3 id="statOverdue">0</h3>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Phiếu mượn gần đây</h3>
+              <a href="#" class="link" data-goto="borrows">Xem tất cả</a>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Mã phiếu</th>
+                  <th>Độc giả</th>
+                  <th>Sách</th>
+                  <th>Ngày mượn</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="recentBorrows"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Thống kê theo thể loại</h3>
+            </div>
+            <div id="categoryStats" class="category-stats"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= QUẢN LÝ SÁCH ================= -->
+      <section id="section-books" class="page-section">
+        <div class="section-toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <input type="text" id="bookSearch" placeholder="Tìm theo tên sách, tác giả, ISBN...">
+              <span>🔍</span>
+            </div>
+            <select id="bookCategoryFilter" class="select-box">
+              <option value="">Tất cả thể loại</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="addBookBtn">＋ Thêm sách</button>
+        </div>
+
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Mã sách</th>
+                <th>Tiêu đề</th>
+                <th>Tác giả</th>
+                <th>Thể loại</th>
+                <th>Năm XB</th>
+                <th>Số lượng</th>
+                <th>Còn lại</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="booksTable"></tbody>
+          </table>
+          <p id="booksEmpty" class="empty-note" hidden>Không tìm thấy sách nào.</p>
+        </div>
+      </section>
+
+      <!-- ================= QUẢN LÝ ĐỘC GIẢ ================= -->
+      <section id="section-readers" class="page-section">
+        <div class="section-toolbar">
+          <div class="search-box">
+            <input type="text" id="readerSearch" placeholder="Tìm theo tên, mã thẻ, số điện thoại...">
+            <span>🔍</span>
+          </div>
+          <button class="btn btn-primary" id="addReaderBtn">＋ Thêm độc giả</button>
+        </div>
+
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Mã thẻ</th>
+                <th>Họ tên</th>
+                <th>Giới tính</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
+                <th>Đang mượn</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="readersTable"></tbody>
+          </table>
+          <p id="readersEmpty" class="empty-note" hidden>Không tìm thấy độc giả nào.</p>
+        </div>
+      </section>
+
+      <!-- ================= MƯỢN / TRẢ SÁCH ================= -->
+      <section id="section-borrows" class="page-section">
+        <div class="section-toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <input type="text" id="borrowSearch" placeholder="Tìm theo mã phiếu, tên độc giả...">
+              <span>🔍</span>
+            </div>
+            <select id="borrowStatusFilter" class="select-box">
+              <option value="">Tất cả trạng thái</option>
+              <option value="Đang mượn">Đang mượn</option>
+              <option value="Đã trả">Đã trả</option>
+              <option value="Quá hạn">Quá hạn</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="addBorrowBtn">＋ Lập phiếu mượn</button>
+        </div>
+
+        <div class="card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Mã phiếu</th>
+                <th>Độc giả</th>
+                <th>Sách</th>
+                <th>Ngày mượn</th>
+                <th>Hạn trả</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="borrowsTable"></tbody>
+          </table>
+          <p id="borrowsEmpty" class="empty-note" hidden>Không tìm thấy phiếu nào.</p>
+        </div>
+      </section>
+
+      <!-- ================= THỂ LOẠI ================= -->
+      <section id="section-categories" class="page-section">
+        <div class="section-toolbar">
+          <div class="card card-inline">
+            <div class="toolbar-left">
+              <button class="btn btn-primary" id="addCategoryBtn">＋ Thêm thể loại</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="categoriesList" class="categories-grid"></div>
+          <p id="categoriesEmpty" class="empty-note" hidden>Chưa có thể loại nào.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= MODAL ================= -->
+  <div class="modal-overlay" id="modalOverlay" hidden>
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Thêm</h3>
+        <button class="modal-close" id="modalClose" aria-label="Đóng">✕</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
