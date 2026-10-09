@@ -1,0 +1,1 @@
+<section class="error-page"><span>404</span><h1>Trang này đang lạc giữa những trang sách.</h1><p>Đường dẫn không tồn tại hoặc cuốn sách đã được lưu trữ.</p><a class="button button-primary" href="<?= e(url('/')) ?>">Trở về trang chủ</a></section>

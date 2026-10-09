@@ -1,0 +1,1 @@
+<section class="error-page"><span>403</span><h1>Bạn chưa được cấp quyền vào trang này.</h1><p>Hãy đăng nhập bằng tài khoản phù hợp hoặc trở về trang thư viện.</p><a class="button button-primary" href="<?= e(url('/')) ?>">Trở về thư viện</a></section>

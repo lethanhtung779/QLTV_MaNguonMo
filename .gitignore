@@ -1,0 +1,18 @@
+.env
+/vendor/
+/storage/logs/*.log
+/storage/cache/*
+/storage/uploads/*
+!/storage/logs/.gitkeep
+!/storage/cache/.gitkeep
+!/storage/uploads/.gitkeep
+
+# Local QA artifacts and private generated credentials
+/storage/*.json
+/storage/*.txt
+/storage/*.png
+/storage/*.py
+/storage/*.cjs
+/storage/browser-qa/
+/storage/backups/
+/storage/*.zip

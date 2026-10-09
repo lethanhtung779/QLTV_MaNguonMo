@@ -1,0 +1,1 @@
+<section class="error-page"><span>419</span><h1>Phiên làm việc đã hết hạn.</h1><p>Vui lòng tải lại trang rồi gửi biểu mẫu thêm một lần nữa.</p><a class="button button-primary" href="<?= e(url('/')) ?>">Tải lại trang chủ</a></section>
