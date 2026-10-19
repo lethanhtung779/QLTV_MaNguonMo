@@ -11,6 +11,7 @@ use Library\Repositories\CategoryRepository;
 use Library\Repositories\ReaderRepository;
 use Library\Repositories\SystemSettingRepository;
 use Library\Services\LoanService;
+use Library\Services\IsbnValidator;
 use PDOException;
 use Throwable;
 
@@ -55,7 +56,7 @@ final class ManagementController extends Controller
             'dailyFine' => $settings->decimal('fine_per_overdue_day', (float) Config::get('DAILY_FINE', 5000), 0, 10000000),
             'damagedCopyFine' => $settings->decimal('damaged_copy_fine', 50000, 0, 99999999),
             'lostCopyFine' => $settings->decimal('lost_copy_fine', 200000, 0, 99999999),
-            'libraryName' => $settings->string('library_name', 'Paper & Page'),
+            'libraryName' => $settings->string('library_name', 'Paper Haven'),
             'maxBooks' => $settings->integer('max_books_per_reader', 5, 1, 50),
             'loanDays' => $settings->integer('default_loan_days', 14, 1, 90),
             'maxRenewals' => $settings->integer('max_renewals', 2, 0, 10),
@@ -110,17 +111,44 @@ final class ManagementController extends Controller
         $user = require_auth(['admin', 'librarian']);
         validate_csrf();
         $path = $this->postPath('return_to', '/admin/books');
+        $uploadedCover = null;
         try {
             $id = request_int('id', 0);
-            $totalCopies = request_int('total_copies', 1, 1000000);
-            $isbn = preg_replace('/[^0-9Xx]/', '', request_string('isbn', 20));
-            $categoryId = request_int('category_id', 0, 1000000);
+            $totalCopies = request_int('total_copies', $id > 0 ? 0 : 1, 1000000);
+            $isbn = IsbnValidator::normalize(request_string('isbn', 20));
+            if ($isbn !== '' && !IsbnValidator::isValid($isbn)) {
+                throw new InvalidArgumentException('ISBN không hợp lệ: vui lòng kiểm tra ISBN-10/ISBN-13 và số kiểm tra.');
+            }
+            $categoryId = request_string('category_id', 20) === '' ? 0 : request_int('category_id', 0, 1000000);
             $yearRaw = request_string('publication_year', 4);
             $year = $yearRaw === '' ? null : filter_var($yearRaw, FILTER_VALIDATE_INT);
             if ($year !== null && ($year === false || $year < 1 || $year > (int) date('Y') + 1)) {
                 throw new InvalidArgumentException('Năm xuất bản không hợp lệ.');
             }
 
+            $uploadedCover = \Library\Services\CoverUpload::store($_FILES['cover'] ?? []);
+            $existingCover = null;
+            $existingIsbn = '';
+            if ($id > 0) {
+                $s=$this->db->prepare('SELECT cover_url, isbn FROM books WHERE id=?');
+                $s->execute([$id]);
+                $existing = $s->fetch();
+                $existingCover = $existing['cover_url'] ?? null;
+                $existingIsbn = IsbnValidator::normalize($existing['isbn'] ?? null);
+                if ($existingIsbn !== $isbn) {
+                    throw new InvalidArgumentException('Hãy cập nhật ISBN tại trang Kiểm toán Metadata để ghi nguồn xác minh đúng ấn bản.');
+                }
+                $isbn = (string) ($existing['isbn'] ?? '');
+            }
+            if ($isbn !== '') {
+                $duplicates = $this->db->prepare("SELECT id, isbn FROM books WHERE id <> ? AND isbn IS NOT NULL AND TRIM(isbn) <> ''");
+                $duplicates->execute([$id]);
+                foreach ($duplicates->fetchAll() as $candidate) {
+                    if (IsbnValidator::normalize($candidate['isbn']) === $isbn) {
+                        throw new InvalidArgumentException('ISBN này đã được sử dụng bởi một đầu sách khác.');
+                    }
+                }
+            }
             $data = [
                 'book_code' => strtoupper(request_string('book_code', 40, true)),
                 'title' => request_string('title', 240, true),
@@ -131,7 +159,7 @@ final class ManagementController extends Controller
                 'publication_year' => $year,
                 'description' => request_string('description', 5000) ?: null,
                 'total_copies' => $totalCopies,
-                'cover_url' => null,
+                'cover_url' => $uploadedCover ?? $existingCover,
             ];
             if ($id > 0) {
                 $repository = new BookRepository($this->db);
@@ -156,11 +184,13 @@ final class ManagementController extends Controller
             }
             $this->success('Đã lưu thông tin sách.', $path);
         } catch (InvalidArgumentException $exception) {
+            \Library\Services\CoverUpload::discard($uploadedCover);
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
             }
             $this->fail($exception->getMessage(), $path);
         } catch (PDOException $exception) {
+            \Library\Services\CoverUpload::discard($uploadedCover);
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -169,6 +199,7 @@ final class ManagementController extends Controller
                 : 'Không thể lưu sách. Hãy kiểm tra dữ liệu thể loại và thử lại.';
             $this->fail($message, $path);
         } catch (Throwable $exception) {
+            \Library\Services\CoverUpload::discard($uploadedCover);
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
             }
@@ -297,11 +328,19 @@ final class ManagementController extends Controller
             if ($id > 0) {
                 $lock=$this->db->prepare('SELECT id FROM readers WHERE id=? FOR UPDATE'); $lock->execute([$id]);
                 if (!$lock->fetchColumn()) throw new InvalidArgumentException('Không tìm thấy độc giả.');
+                $state=$this->db->prepare('SELECT is_active FROM readers WHERE id=?'); $state->execute([$id]);
+                if ((int)$state->fetchColumn() !== $active) require_permission('readers.suspend');
                 if (!$active) $this->validateReaderDeactivation($id);
                 $repository->update($id, $data);
                 $this->db->prepare('UPDATE readers SET is_active=? WHERE id=?')->execute([$active,$id]);
                 (new ActivityRepository($this->db))->log((int)$user['id'],'reader_updated','reader',$id,'Cập nhật độc giả '.$data['full_name']);
             } else {
+                if (!$active) require_permission('readers.suspend');
+                $accountPassword=request_password('account_password');
+                if ($accountPassword!=='') {
+                    if ($email==='' || strlen($accountPassword)<12 || !preg_match('/[A-Z]/',$accountPassword) || !preg_match('/[a-z]/',$accountPassword) || !preg_match('/[0-9]/',$accountPassword)) throw new InvalidArgumentException('Tạo tài khoản cần email hợp lệ và mật khẩu 12 ký tự gồm chữ hoa, chữ thường và số.');
+                    $data['user_id']=(new \Library\Repositories\UserRepository($this->db))->create(['name'=>$data['full_name'],'email'=>$email,'password_hash'=>password_hash($accountPassword,PASSWORD_DEFAULT),'role'=>'reader']);
+                }
                 $id=$repository->create($data);
                 $this->db->prepare('UPDATE readers SET is_active=? WHERE id=?')->execute([$active,$id]);
                 (new ActivityRepository($this->db))->log((int)$user['id'],'reader_created','reader',$id,'Thêm độc giả '.$data['full_name']);

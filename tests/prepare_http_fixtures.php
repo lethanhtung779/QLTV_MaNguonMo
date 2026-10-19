@@ -12,3 +12,4 @@ foreach(['admin','librarian','reader'] as $role) {
 $out['book_id']=(int)$db->query('SELECT id FROM books WHERE is_active=1 ORDER BY id LIMIT 1')->fetchColumn();
 file_put_contents(dirname(__DIR__).'/storage/http_qa.json',json_encode($out));
 echo "PASS: isolated HTTP fixtures created; credentials kept in ignored storage.\n";
+$image=imagecreatetruecolor(6001,1); imagepng($image,dirname(__DIR__).'/storage/qa-wide.png'); imagedestroy($image);

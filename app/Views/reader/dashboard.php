@@ -27,7 +27,7 @@
   <div class="panel-heading"><div><span class="eyebrow">BIÊN NHẬN CỦA BẠN</span><h2>Lịch sử thanh toán phí</h2></div></div>
   <div class="table-scroll"><table><thead><tr><th>Thời điểm</th><th>Số tiền</th><th>Hình thức</th><th>Mã tham chiếu</th><th>Người tiếp nhận</th></tr></thead><tbody>
     <?php foreach ($finePayments as $payment): ?>
-      <tr><td><?= e(date('d/m/Y H:i', strtotime($payment['created_at']))) ?></td><td><strong><?= number_format((float) $payment['amount'], 0, ',', '.') ?>đ</strong></td><td><?= ['cash' => 'Tiền mặt', 'bank_transfer' => 'Chuyển khoản', 'card' => 'Thẻ', 'other' => 'Khác'][$payment['method']] ?? e($payment['method']) ?></td><td><?= e($payment['reference_code'] ?: '—') ?></td><td><?= e($payment['receiver_name'] ?: '—') ?></td></tr>
+      <tr><td><?= e(date('d/m/Y H:i', strtotime($payment['created_at']))) ?></td><td><strong><?= number_format((float) $payment['amount'], 0, ',', '.') ?>đ</strong></td><td><?= ['cash' => 'Tiền mặt', 'bank_transfer' => 'Chuyển khoản', 'card' => 'Thẻ', 'other' => 'Khác'][$payment['method']] ?? e($payment['method']) ?></td><td><?= e($payment['reference_code'] ?: '—') ?></td><td><?= e($payment['receiver_name'] ?: '—') ?><br><a class="pdf-link" href="<?= e(url('/receipts/payment/'.$payment['id'])) ?>">Biên nhận PDF</a></td></tr>
     <?php endforeach; ?>
   </tbody></table></div>
 </section>
@@ -38,13 +38,13 @@
     <div class="table-scroll"><table><thead><tr><th>Sách / bản sao</th><th>Ngày mượn</th><th>Hạn trả</th><th>Ngày trả</th><th>Trạng thái</th><th>Phí tạm tính</th><th></th></tr></thead><tbody>
       <?php foreach ($loans as $loan): ?>
         <tr>
-          <td><strong><?= e($loan['book_title']) ?></strong><small><?= e($loan['book_code']) ?> · <?= e($loan['copy_code']) ?></small></td>
+          <td><div class="table-book"><?= book_thumbnail($loan) ?><div><strong><?= e($loan['book_title']) ?></strong><small><?= e($loan['author']) ?></small><small><?= e($loan['book_code']) ?> · <?= e($loan['copy_code']) ?></small></div></div></td>
           <td><?= e(format_date($loan['borrowed_at'])) ?></td>
           <td><?= e(format_date($loan['due_at'])) ?></td>
           <td><?= e(format_date($loan['returned_at'])) ?></td>
           <td><span class="status-pill <?= e($loan['loan_status']) ?>"><?= $loan['loan_status'] === 'returned' ? 'Đã trả' : ($loan['loan_status'] === 'overdue' ? 'Quá hạn' : 'Đang mượn') ?></span></td>
           <td><?= (float) $loan['fine_amount'] > 0 ? number_format((float) $loan['fine_amount'], 0, ',', '.') . 'đ' : '—' ?></td>
-          <td><?php if (!$loan['returned_at'] && $loan['loan_status'] === 'borrowed' && (int) ($loan['renewal_count'] ?? 0) < $maxRenewals): ?><form method="post" action="<?= e(url('/account/loans/renew')) ?>" data-confirm="Gia hạn riêng bản sao này?"><?= csrf_field() ?><input type="hidden" name="item_id" value="<?= (int) $loan['loan_item_id'] ?>"><button class="button button-small button-outline">Gia hạn <?= (int) ($loan['renewal_count'] ?? 0) ?>/<?= (int) $maxRenewals ?></button></form><?php endif; ?></td>
+          <td><?php if (!$loan['returned_at'] && $loan['loan_status'] === 'borrowed' && (int) ($loan['renewal_count'] ?? 0) < $maxRenewals): ?><form method="post" action="<?= e(url('/account/loans/renew')) ?>" data-confirm="Gia hạn riêng bản sao này?"><?= csrf_field() ?><?= mutation_field() ?><input type="hidden" name="item_id" value="<?= (int) $loan['loan_item_id'] ?>"><button class="button button-small button-outline">Gia hạn <?= (int) ($loan['renewal_count'] ?? 0) ?>/<?= (int) $maxRenewals ?></button></form><?php endif; ?></td>
         </tr>
       <?php endforeach; ?>
     </tbody></table></div>
@@ -56,11 +56,11 @@
     <div class="table-scroll"><table><thead><tr><th>Sách / bản sao</th><th>Ngày yêu cầu</th><th>Hạn nhận sách</th><th>Trạng thái</th><th></th></tr></thead><tbody>
       <?php foreach ($reservations as $reservation): ?>
         <tr>
-          <td><strong><?= e($reservation['title']) ?></strong><small><?= e($reservation['author']) ?><?= !empty($reservation['copy_code']) ? ' · Bản giữ ' . e($reservation['copy_code']) : '' ?></small></td>
+          <td><div class="table-book"><?= book_thumbnail($reservation) ?><div><strong><?= e($reservation['title']) ?></strong><small><?= e($reservation['author']) ?><?= !empty($reservation['copy_code']) ? ' · Bản giữ ' . e($reservation['copy_code']) : '' ?></small></div></div></td>
           <td><?= e(date('d/m/Y', strtotime($reservation['reserved_at']))) ?></td>
           <td><?= e($reservation['expires_at'] ? date('d/m/Y', strtotime($reservation['expires_at'])) : '—') ?></td>
           <td><span class="status-pill <?= e($reservation['status']) ?>"><?= ['pending' => 'Đang chờ', 'ready' => 'Có thể nhận', 'fulfilled' => 'Đã hoàn tất', 'cancelled' => 'Đã hủy'][$reservation['status']] ?? e($reservation['status']) ?></span></td>
-          <td><?php if (in_array($reservation['status'], ['pending', 'ready'], true)): ?><form method="post" action="<?= e(url('/account/reservations/cancel')) ?>" data-confirm="Hủy yêu cầu đặt trước này?"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $reservation['id'] ?>"><button class="icon-button danger-button">Hủy</button></form><?php endif; ?></td>
+          <td><?php if (in_array($reservation['status'], ['pending', 'ready'], true)): ?><form method="post" action="<?= e(url('/account/reservations/cancel')) ?>" data-confirm="Hủy yêu cầu đặt trước này?"><?= csrf_field() ?><?= mutation_field() ?><input type="hidden" name="id" value="<?= (int) $reservation['id'] ?>"><button class="icon-button danger-button">Hủy</button></form><?php endif; ?></td>
         </tr>
       <?php endforeach; ?>
     </tbody></table></div>
@@ -70,3 +70,5 @@
   <div class="section-heading"><div><span class="eyebrow">CÓ THỂ BẠN SẼ THÍCH</span><h2>Tiếp tục <em>khám phá</em></h2></div><a class="text-link" href="<?= e(url('/catalog')) ?>">Tất cả sách <span>→</span></a></div>
   <?php if ($books): ?><div class="book-grid"><?php foreach (array_slice($books, 0, 4) as $book): include dirname(__DIR__) . '/partials/book_card.php'; endforeach; ?></div><?php else: ?><p class="muted">Danh mục sách đang được cập nhật.</p><?php endif; ?>
 </section>
+
+<section class="panel"><h2>Biên nhận của bạn</h2><div class="inline-actions"><?php foreach (array_unique(array_column($loans,'id')) as $loanId): ?><a class="button button-small button-outline" href="<?= e(url('/receipts/loan/'.$loanId)) ?>">Phiếu mượn #<?= (int)$loanId ?> PDF</a><?php if (array_filter($loans,fn($entry)=>(int)$entry['id']===(int)$loanId && $entry['returned_at']!==null)): ?><a class="button button-small button-outline" href="<?= e(url('/receipts/return/'.$loanId)) ?>">Biên nhận trả #<?= (int)$loanId ?> PDF</a><?php endif; ?><?php endforeach; ?></div></section>

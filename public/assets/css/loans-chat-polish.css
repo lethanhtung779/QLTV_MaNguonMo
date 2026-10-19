@@ -1,0 +1,32 @@
+/* Paper Haven 2026 - circulation & chat UI; additive, no hidden demo via CSS. */
+.premium-loans-table {width:100%;table-layout:auto;border-collapse:collapse;font-size:clamp(13px,.94vw,15px)}
+.premium-loans-table th {font-weight:650;white-space:normal;padding:12px 10px;vertical-align:middle}
+.premium-loans-table td {vertical-align:middle!important;border-bottom:1px solid #e9e2d9}
+.premium-loans-table .loan-line-list {display:flex;flex-direction:column;gap:7px}
+.premium-loans-table .loan-line {display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:10px;border:1px solid #e7ddd0;border-radius:9px;background:#fffdfa;max-width:100%}
+.premium-loans-table .loan-line-book {display:flex;gap:10px;align-items:center;flex:1 1 210px;min-width:0}
+.premium-loans-table .loan-line-book>div {min-width:0}
+.premium-loans-table .loan-line-book strong {overflow-wrap:anywhere}
+.premium-loans-table .loan-line-status {flex:0 1 auto}
+.premium-loans-table .loan-line-actions {display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-start}
+.premium-loans-table .loan-action-form {display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:0}
+.premium-loans-table .loan-receipt-actions {display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.premium-loans-table .loan-receipt-links {display:flex;gap:5px;flex-wrap:wrap}
+.premium-loans-table .status-pill {white-space:nowrap}
+/* Chat: compact, usable, and doesn't obscure a large portion of the table. */
+.library-chat {right:16px;bottom:16px;max-width:calc(100vw - 24px)}
+.library-chat .chat-panel {width:min(368px,calc(100vw - 24px));height:min(530px,calc(100dvh - 112px));max-height:calc(100dvh - 100px);border-radius:16px;box-shadow:0 12px 42px rgba(12,39,32,.2)}
+.library-chat .chat-messages {min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.library-chat .chat-form {display:flex;align-items:flex-end;gap:7px;min-width:0}
+.library-chat .chat-form textarea,.library-chat .chat-form input {flex:1 1 auto;min-width:0;width:100%;box-sizing:border-box;max-height:110px;resize:vertical;line-height:1.4}
+.library-chat .chat-form button {flex:0 0 auto;min-height:38px;align-self:flex-end}
+.library-chat .chat-suggestions {display:flex;flex-wrap:wrap;gap:6px;max-height:78px;overflow-y:auto;overflow-x:hidden}
+.library-chat .chat-suggestions button {max-width:100%;white-space:normal;text-align:left}
+.library-chat .chat-options {flex-shrink:0}
+.library-chat .chat-launch[aria-expanded="true"] {display:none}
+.library-chat .chat-panel[hidden] {display:none!important}
+@media(max-width:760px){
+ .premium-loans-table {min-width:650px}
+ .library-chat {right:10px;bottom:10px}
+ .library-chat .chat-panel {width:calc(100vw - 20px);height:min(560px,calc(100dvh - 92px))}
+}

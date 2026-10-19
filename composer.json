@@ -1,18 +1,22 @@
 {
-  "name": "paper-page/library-management",
-  "description": "Hệ thống quản lý thư viện PHP và MySQL",
-  "type": "project",
-  "require": {
-    "php": "^8.2",
-    "ext-pdo": "*",
-    "ext-pdo_mysql": "*",
-    "ext-mbstring": "*"
-  },
-  "scripts": {
-    "test": "php tests/run.php",
-    "lint": "php tests/lint.php"
-  },
-  "config": {
-    "sort-packages": true
-  }
+    "name": "paper-page/library-management",
+    "description": "Há»‡ thá»‘ng quáº£n lĂ½ thÆ° viá»‡n PHP vĂ  MySQL",
+    "type": "project",
+    "require": {
+        "php": "^8.2",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "dompdf/dompdf": "^3.1",
+        "ext-gd": "*",
+        "ext-fileinfo": "*",
+        "ext-dom": "*"
+    },
+    "scripts": {
+        "test": "php tests/run.php",
+        "lint": "php tests/lint.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
 }

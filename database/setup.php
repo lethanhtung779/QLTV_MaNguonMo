@@ -75,6 +75,22 @@ try {
             $migration = require __DIR__ . '/migrations/006_normalized_catalog_metadata.php';
             $migration($connection);
         },
+        '007_action_permissions' => static function (PDO $connection): void {
+            $migration = require __DIR__ . '/migrations/007_action_permissions.php';
+            $migration($connection);
+        },
+        '008_return_receipt_snapshot' => static function (PDO $connection): void {
+            $migration = require __DIR__ . '/migrations/008_return_receipt_snapshot.php';
+            $migration($connection);
+        },
+        '009_mutation_requests' => static function (PDO $connection): void {
+            $migration = require __DIR__ . '/migrations/009_mutation_requests.php';
+            $migration($connection);
+        },
+        '010_zero_operational_inventory' => static function (PDO $connection): void {
+            $migration = require __DIR__ . '/migrations/010_zero_operational_inventory.php';
+            $migration($connection);
+        },
     ];
     foreach ($migrations as $version => $applyMigration) {
         $migrationCheck->execute([$version]);

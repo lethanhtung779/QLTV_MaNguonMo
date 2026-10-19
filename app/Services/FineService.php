@@ -19,8 +19,13 @@ final class FineService
 
     public function synchronizeReader(int $readerId, ?int $assessedBy = null): void
     {
+        $this->synchronizeItems((new FineRepository($this->db))->overdueItems($readerId), $assessedBy);
+    }
+
+    private function synchronizeItems(array $items, ?int $assessedBy): void
+    {
         $repository = new FineRepository($this->db);
-        foreach ($repository->overdueItems($readerId) as $item) {
+        foreach ($items as $item) {
             $days = (int) $item['overdue_days'];
             $amountCents = self::toCents((string) $item['daily_fine']) * $days;
             if ($days > 0 && $amountCents > 0) {
@@ -67,10 +72,7 @@ final class FineService
 
     public function synchronizeAll(): void
     {
-        $repository = new FineRepository($this->db);
-        foreach ($repository->overdueReaderIds() as $readerId) {
-            $this->synchronizeReader($readerId);
-        }
+        $this->synchronizeItems((new FineRepository($this->db))->overdueItems(), null);
     }
 
     public function balance(int $readerId): float
@@ -88,13 +90,33 @@ final class FineService
         return $totalCents / 100;
     }
 
+    /** Read-only equivalent of balance after overdue assessment, using the same cents/snapshot rules. */
+    public function previewBalance(int $readerId): float { return $this->previewFor($readerId); }
+    public function previewTotalBalance(): float { return $this->previewFor(null); }
+    private function previewFor(?int $readerId): float
+    {
+        $repo = new FineRepository($this->db);
+        $overdue = [];
+        foreach ($repo->overdueItems($readerId) as $item) $overdue[(int)$item['id']] = self::toCents((string)$item['daily_fine']) * (int)$item['overdue_days'];
+        $sum=0;
+        foreach (($readerId === null ? $repo->chargesForAll() : $repo->chargesForReader($readerId)) as $charge) {
+            $amount=self::toCents((string)$charge['amount']);
+            if ($charge['charge_type']==='overdue') {
+                $id=(int)$charge['loan_item_id'];$amount=max($amount,$overdue[$id]??0);unset($overdue[$id]);
+            }
+            $sum+=max(0,$amount-self::toCents((string)$charge['paid_amount'])-self::toCents((string)$charge['waived_amount']));
+        }
+        return ($sum+array_sum($overdue))/100;
+    }
+
     public function recordPayment(
         int $readerId,
         string $amount,
         string $method,
         ?string $reference,
         ?string $note,
-        int $userId
+        int $userId,
+        ?string $requestKey = null
     ): void {
         $amountCents = self::toCents($amount);
         if ($readerId < 1 || $amountCents < 1 || !in_array($method, ['cash', 'bank_transfer', 'card', 'other'], true)) {
@@ -103,6 +125,12 @@ final class FineService
 
         $this->db->beginTransaction();
         try {
+            $request = new MutationRequest($this->db,$userId,'payment',$requestKey);
+            $previous=$request->claim([$readerId,$amountCents,$method,$reference ?: null,$note ?: null]);
+            if ($previous !== null) {
+                $this->db->commit();
+                return;
+            }
             $reader = (new ReaderRepository($this->db))->findForUpdate($readerId);
             if (!$reader) {
                 throw new RuntimeException('Không tìm thấy độc giả đang hoạt động.');
@@ -161,6 +189,7 @@ final class FineService
                     'fine-payment:' . $paymentId
                 );
             }
+            $request->complete(['payment_id'=>$paymentId]);
             $this->db->commit();
         } catch (\Throwable $exception) {
             if ($this->db->inTransaction()) {

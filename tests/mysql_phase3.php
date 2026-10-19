@@ -153,6 +153,7 @@ try {
     $service->returnBook($thirdItem, $adminId, 'good');
 
     $admin = $db->query('SELECT id, name, email, role FROM users WHERE id = ' . $adminId)->fetch();
+    $admin['credential_version'] = hash('sha256', (new UserRepository($db))->findById($adminId)['password_hash']);
     $_SESSION['user'] = $admin;
     $router = new Router();
     ob_start();
@@ -180,6 +181,7 @@ try {
         'name' => 'QA Phase 3 4',
         'email' => 'qa-phase3-test@example.test',
         'role' => 'reader',
+        'credential_version' => hash('sha256', (new UserRepository($db))->findById($userIds[3])['password_hash']),
     ];
     ob_start();
     $router->dispatch('GET', '/notifications');

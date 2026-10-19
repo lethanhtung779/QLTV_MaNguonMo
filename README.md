@@ -1,117 +1,158 @@
-# Paper & Page — Hệ thống quản lý thư viện
+# PAPER HAVEN — HỆ THỐNG QUẢN LÝ THƯ VIỆN TRỰC TUYẾN
+### ĐỒ ÁN MÔN HỌC: LẬP TRÌNH MÃ NGUỒN MỞ (OPEN SOURCE PROGRAMMING)
 
-Ứng dụng quản lý thư viện bằng **PHP 8.2+**, **PDO MySQL** và **MySQL 8 / MariaDB tương thích**. Dữ liệu nghiệp vụ được lưu ở database; không dùng `localStorage` làm nguồn dữ liệu ứng dụng PHP.
+[![PHP 8.3](https://img.shields.io/badge/PHP-8.3.33-777BB4?style=flat-square&logo=php&logoColor=white)](https://www.php.net/)
+[![MySQL 8.4](https://img.shields.io/badge/MySQL-8.4.3%20LTS-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/Automated%20Tests-100%25%20PASS%20(93%2F93)-brightgreen?style=flat-square)]()
+[![Code Standard](https://img.shields.io/badge/Code%20Style-Strict%20Types%20%26%20PSR--4-blue?style=flat-square)]()
 
-## Chức năng
+---
 
-- Trang công khai bằng tiếng Việt: trang chủ, tìm kiếm/lọc danh mục, chi tiết sách, tình trạng bản sách, thể loại và quy định mượn.
-- Đăng nhập PHP Session, đăng ký thẻ độc giả có thể bật/tắt, phân quyền quản trị viên/thủ thư/độc giả, CSRF, băm mật khẩu và giới hạn thử đăng nhập.
-- Dashboard quản trị, thống kê theo thể loại/tháng, nhật ký hoạt động và các chỉ số sách/độc giả/mượn-trả/quá hạn.
-- CRUD sách, độc giả, thể loại, tác giả/nhà xuất bản; phân trang server catalog/độc giả, lọc/sắp xếp; giữ lịch sử khi ngừng lưu hành.
-- Trang quản lý từng bản sao, barcode/vị trí kệ/tình trạng, chặn sửa copy đang mượn/giữ chỗ; kho từng bản sao có mã riêng; một phiếu chứa nhiều bản sao, trả từng bản và giữ lịch sử khi phiếu còn bản chưa trả.
-- Gia hạn từng bản theo chính sách có phiên bản và lịch sử; chặn gia hạn quá hạn, hết lượt hoặc khi có người đặt trước.
-- Hàng đợi đặt trước FIFO gắn bản sao cụ thể; tự cấp bản khi trả/thêm tồn, thời hạn nhận, tự giải phóng khi hết hạn.
-- Sổ phí MySQL cho quá hạn, sách hỏng/mất; thu tiền có phân bổ theo khoản cũ nhất, chặn thu vượt nợ, miễn/giảm có lý do và audit trail.
-- Metadata tác giả/nhà xuất bản chuẩn hóa; một đầu sách hỗ trợ nhiều tác giả (phân cách bằng dấu `;`) mà vẫn giữ trường legacy tương thích.
-- Báo cáo tồn kho/phí và CSV; thống kê lượt mượn có bộ lọc khoảng ngày/trạng thái và xuất CSV UTF-8 có chống formula injection; dashboard có KPI dư nợ.
-- Thông báo sắp hạn/quá hạn khi mở account/notifications, CLI database/maintenance.php; thông báo MySQL có trạng thái đã đọc/chưa đọc và khóa chống tạo trùng; độc giả xem thẻ, lịch sử, dư nợ/chi tiết phí, lịch sử thanh toán, đặt trước, gia hạn, hồ sơ và đổi mật khẩu.
-- Giao diện PAPER & PAGE: xanh rừng, giấy kem, điểm nhấn màu đồng, responsive, ảnh bìa Open Library theo ISBN và bìa dự phòng.
+## 1. GIỚI THIỆU TỔNG QUAN
 
-## Yêu cầu môi trường
+**Paper Haven** là hệ thống quản lý thư viện trực tuyến toàn diện được thiết kế và xây dựng theo mô hình **Phân tầng (Layered Architecture)** kết hợp mẫu kiến trúc **Model-View-Controller (MVC)** hướng đối tượng trong **PHP 8.3 Native** và **MySQL 8.4**.
 
-- PHP 8.2 trở lên với `pdo`, `pdo_mysql`, `mbstring`.
-- MySQL 8.x hoặc MariaDB tương thích, InnoDB và tài khoản có quyền tạo database/bảng khi chạy setup.
-- Apache với `mod_rewrite` hoặc PHP built-in server để phát triển.
-- Composer không bắt buộc khi chạy ứng dụng; autoload PSR-4 gọn được cung cấp trong `bootstrap/autoload.php`.
+Dự án ra đời nhằm cung cấp một giải pháp quản lý thư viện hiện đại, minh bạch, bảo mật cao và vận hành độc lập hoàn toàn bằng các công nghệ mã nguồn mở, phục vụ trọn vẹn 3 nhóm người dùng: **Quản trị viên (Admin)**, **Thủ thư (Librarian)** và **Độc giả (Reader)**.
 
-## Chạy trên Windows (PowerShell)
+### Điểm nhấn kỹ thuật & Nghiệp vụ nổi bật:
+* **Mô hình Quản lý Bản sao Vật lý (Copy-level Tracking):** Mỗi cuốn sách được quản lý theo từng bản sao độc lập với mã vạch (`copy_code`), vị trí kệ (`shelf_location`), tình trạng vật lý và trạng thái (`available`, `on_loan`, `damaged`, `pending_audit`).
+* **Đạo đức Dữ liệu Khoa học (Real Books Only):** 100% danh mục sách thực sự tồn tại trên thị trường xuất bản. Cam kết **không sử dụng ảnh bìa do AI tạo ra** và **không tự sinh ISBN ảo**.
+* **Công cụ Sinh Mã vạch & QR Code Độc lập:** Tạo mã vạch chuẩn **Code 128** và mã phản hồi nhanh **QR Code** dạng vector SVG thuần túy qua `BarcodeService` và `QrCodeService`, không phụ thuộc vào bất kỳ API hay thư viện đóng bên ngoài.
+* **Hệ thống Lưu thông & Quyết toán Phí phạt Chuyên sâu:** Quy trình mượn - trả - gia hạn khép kín, tự động tính phí phạt trễ hạn lũy tiến hàng ngày, phân bổ thanh toán FIFO và hỗ trợ miễn giảm phạt có thẩm quyền.
+* **Biên nhận Điện tử (E-Receipts):** Kết xuất biên nhận mượn sách, trả sách và phiếu thu tiền phạt dạng in nhiệt chuyên nghiệp kèm mã vạch tra cứu tức thì.
+* **Hàng đợi Giữ chỗ Tự động (FIFO Reservation Queue):** Tự động giữ sách và gửi thông báo khi có bản sao hoàn trả về thư viện.
+* **Kiểm kê Kho sách Thực địa (Inventory Audit):** Hỗ trợ thủ thư quét mã vạch đối soát tồn kho thời gian thực, phát hiện sách sai kệ, sách mất hoặc hư hại.
+* **Trợ lý Thư viện Thông minh (Chatbot):** Cơ chế lai tích hợp sẵn bộ phân tích ngữ nghĩa Regex Engine nội bộ (hoạt động ngoại tuyến không cần Internet), kết hợp tùy chọn kết nối Google Gemini API khi có API Key.
 
-1. Cài PHP 8.2+ (hoặc dùng PHP đi kèm XAMPP/Laragon), MySQL/MariaDB và bật extension `pdo_mysql`, `mbstring`.
-2. Mở PowerShell tại thư mục project, sao chép cấu hình:
+---
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-3. Sửa `.env`: đặt tài khoản MySQL, tên database, email quản trị và mật khẩu quản trị riêng mạnh. Không đưa `.env` lên Git hoặc web.
-4. Khởi động MySQL rồi áp dụng migration nền tảng và nạp dữ liệu danh mục/sách ban đầu:
-
-   ```powershell
-   php database/setup.php
-   ```
-
-   Các migration `001`–`006` được ghi nhận trong bảng `schema_migrations`; chạy lại lệnh này không xóa dữ liệu hiện có.
-
-5. Seed một tài khoản quản trị local:
-
-   ```powershell
-   php database/seed.php
-   ```
-
-   Mật khẩu quản trị được băm trước khi lưu. Ứng dụng không hiển thị tài khoản mẫu trên trang đăng nhập.
-
-6. Chạy ứng dụng:
-
-   ```powershell
-   php -S 127.0.0.1:8000 -t public public/index.php
-   ```
-
-   Mở `http://127.0.0.1:8000`. Với Apache, đặt document root vào thư mục `public/` là cấu hình khuyến nghị. File `.htaccess` tại root cũng hỗ trợ chuyển tiếp URL và chặn truy cập các thư mục nhạy cảm khi máy chủ cho phép override.
-
-Đặt `APP_ENV=production` và `APP_DEBUG=false` khi triển khai thật. Đóng đăng ký công khai bằng `ALLOW_PUBLIC_REGISTRATION=false`. Cấu hình vận hành nằm trong `.env`; trang Cài đặt chỉ hiển thị trạng thái và không tiết lộ mật khẩu kết nối.
-
-## Kiểm thử
-
-```powershell
-php tests/lint.php
-php tests/run.php
-node --check public/assets/js/app.js
-```
-
-`tests/run.php` độc lập database. Tất cả test MySQL ghi dữ liệu yêu cầu DB_NAME theo mẫu paper_page_test_...; không chạy vào database ứng dụng. Quy trình:
-
-```powershell
-php tests/prepare_test_database.php
-$env:DB_NAME = (Get-Content storage/test_database_name.txt -Raw).Trim()
-php tests/security.php
-php tests/mysql_completion.php
-php tests/mysql_phase3.php
-php tests/mysql_phase4.php
-php tests/mysql_concurrency.php
-php tests/setup_fresh.php
-php tests/prepare_http_fixtures.php
-php tests/mysql_reminders.php
-Remove-Item Env:DB_NAME
-```
-
-Lượt nghiệm thu 08/10/2026: lint 92 PHP, smoke 10, security 15, MySQL phase3 18/phase4 21/completion 26/reminder 5; concurrency và cài mới PASS. Edge/Playwright chạy 273 checks và 110 trang/viewport tại 1440/1366/1024/768/390px. Xem [TEST_REPORT](docs/TEST_REPORT.md) và [bàn giao](docs/FINAL_HANDOVER.md).
-
-## Cấu trúc chính
+## 2. KIẾN TRÚC HỆ THỐNG & CÔNG NGHỆ
 
 ```text
-app/
-  Controllers/       Điều phối request và kiểm tra quyền
-  Core/              Router, PDO, session, CSRF, view, config
-  Repositories/      Truy vấn MySQL
-  Services/          Nghiệp vụ đăng nhập và mượn/trả
-  Views/             Layout, trang công khai, quản trị, độc giả
-bootstrap/           Autoload và cấu hình ứng dụng
-database/            Schema, migration/setup, seed sách và tạo quản trị viên
-docs/                Audit và design system
-public/              Document root, front controller và tài sản tĩnh
-tests/               Kiểm tra cú pháp và smoke test
+QLTV_MaNguonMo-github-stage/
+├── app/                        # Ứng dụng lõi (Namespace: Library\)
+│   ├── Controllers/            # 12 Bộ điều khiển HTTP
+│   ├── Core/                   # Framework nền tảng (Database, Router, View, Permissions)
+│   ├── Repositories/           # Tầng truy xuất dữ liệu MySQL (Prepared Statements)
+│   ├── Services/               # Tầng logic nghiệp vụ chuyên sâu (Circulation, Fines, Audits, Barcode)
+│   ├── Views/                  # Tầng giao diện người dùng (Bố cục Public & Staff)
+│   └── Support/                # Hàm tiện ích toàn cục (helpers.php)
+├── bootstrap/                  # Khởi tạo ứng dụng & nạp cấu hình
+├── database/                   # Quản lý 16 tệp Migration & Schema
+├── docs/                       # Toàn bộ tài liệu kỹ thuật & Báo cáo đối soát
+│   └── submission/             # 10 tệp Hồ sơ Bàn giao chính thức nộp môn
+├── public/                     # Thư mục gốc web công khai (Single Entry Point: index.php)
+│   ├── assets/                 # CSS, JavaScript, Web Fonts, Book Covers
+│   └── uploads/                # Tệp người dùng tải lên được kiểm duyệt
+├── storage/                    # Log hệ thống, ảnh đối soát, bộ đệm
+├── tests/                      # Bộ kiểm thử tự động toàn diện (Lint, Smoke, Business, Postflight)
+├── composer.json               # Cấu hình nạp mã nguồn tự động PSR-4
+└── .env.example                # Mẫu thiết lập môi trường chuẩn
 ```
 
-## Dữ liệu và giới hạn
+---
 
-- Sách/thể loại mẫu được nạp bằng `database/setup.php`; không có reader/admin mặc định nếu chưa chạy seed/đăng ký.
-- Fixture demo mở rộng chỉ chạy opt-in ở local: đặt `SEED_DEMO_DATA=true`, sau đó chạy `php database/seed_demo.php`. Lệnh này thêm 21 sách gắn nhãn demo, tài khoản thủ thư/độc giả riêng và các phiếu/đặt trước/phí mẫu; mật khẩu thiếu được tạo và lưu trong `.env` mà không in ra terminal. Chỉ chạy trên database dev.
-- Setup ghi version migration vào `schema_migrations`; `002` tạo bản sao và chi tiết mượn; `003` thêm chính sách, reservation và thông báo; `004` lưu snapshot gia hạn; `005` thêm ledger phí/thanh toán/miễn giảm; `006` chuẩn hóa authors/publishers và backfill liên kết cho catalog hiện có. Bảng `loans` và cột metadata legacy được giữ tương thích. Không chạy lệnh reset trên database có dữ liệu.
-- PDF export và RBAC granular chưa được triển khai. Checkout/payment có transaction, row lock và constraint; kiểm thử concurrency hai session thật đã PASS trên DB test riêng. Đây là giới hạn ngoài các luồng hiện tại; xem [docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) và [docs/TEST_REPORT.md](docs/TEST_REPORT.md).
-- Seed nền tạo 9 sách mẫu; fixture opt-in `database/seed_demo.php` bổ sung 21 sách demo và các tài khoản/luồng nghiệp vụ tổng hợp. Dữ liệu fixture được đánh dấu trong mã sách, thẻ độc giả và ghi chú phiếu.
-- Ảnh bìa ISBN gọi Open Library; ảnh không khả dụng sẽ chuyển về bìa CSS. Ảnh hero tải từ Unsplash; nội dung chính vẫn dùng được khi ảnh ngoài không tải.
-- Chính sách nghiệp vụ có thể cập nhật trong trang Cài đặt; thông tin bí mật/môi trường vẫn chỉ cấu hình trong `.env`.
-- Trạng thái hỗ trợ php/MySQL thực tế phụ thuộc phiên bản/cấu hình cài đặt. Hãy chạy các kiểm tra trên máy mục tiêu trước khi triển khai production.
-- Các `index.html`, `dashboard.html`, `css/` và `js/` cũ là tài liệu của bản frontend trước đây; entry point PHP/MySQL chính thức là `public/index.php`. Root `.htaccess` chặn các trang frontend cũ khi chạy Apache.
+## 3. HƯỚNG DẪN CÀI ĐẶT & CHẠY NHANH (QUICK START)
 
-Tài liệu đồ án: [audit](docs/PROJECT_AUDIT.md), [yêu cầu](docs/REQUIREMENTS.md), [kiến trúc](docs/SYSTEM_ARCHITECTURE.md), [use cases](docs/USE_CASES.md), [quy tắc nghiệp vụ](docs/BUSINESS_RULES.md), [thiết kế](docs/DESIGN_SYSTEM.md), [database](docs/DATABASE_DESIGN.md), [data dictionary](docs/DATA_DICTIONARY.md), [ERD](docs/ERD.md), [sơ đồ hệ thống](docs/DIAGRAMS.md), [cài đặt](docs/INSTALLATION_GUIDE.md), [hướng dẫn người dùng](docs/USER_GUIDE.md), [routes](docs/API_DOCUMENTATION.md), [bảo mật](docs/SECURITY_CHECKLIST.md), [triển khai](docs/DEPLOYMENT_GUIDE.md), [kiểm thử](docs/TEST_REPORT.md), [bàn giao](docs/FINAL_HANDOVER.md), [migration](docs/MIGRATION_GUIDE.md) và [kế hoạch](docs/IMPLEMENTATION_PLAN.md).
+### Yêu cầu môi trường:
+- PHP >= 8.2 (Khuyến nghị **PHP 8.3.33** với PDO MySQL, mbstring, json, gd).
+- MySQL >= 8.0 (Khuyến nghị **MySQL 8.4.3 LTS**).
+- Khuyên dùng môi trường **Laragon 6.0+** trên Windows.
+
+### Các bước cài đặt:
+
+1. **Khởi tạo tệp môi trường `.env`:**
+   ```bash
+   cp .env.example .env
+   ```
+   *Cấu hình thông số kết nối CSDL trong tệp `.env` (`DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`).*
+
+2. **Tạo Cơ sở dữ liệu MySQL:**
+   ```sql
+   CREATE DATABASE IF NOT EXISTS `paper_page_library` 
+   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+
+3. **Chạy di chuyển cấu trúc CSDL (Migrations):**
+   ```bash
+   php database/migrate.php
+   ```
+
+4. **Nạp autoloader của Composer:**
+   ```bash
+   composer dump-autoload
+   ```
+
+5. **Khởi chạy máy chủ phát triển:**
+   ```bash
+   php -S 127.0.0.1:8010 -t public public/index.php
+   ```
+   Truy cập hệ thống tại: **`http://127.0.0.1:8010`**
+
+---
+
+## 4. TÀI KHOẢN MẪU ĐỂ TRẢI NGHIỆM
+
+| Vai trò | Email đăng nhập | Mật khẩu mẫu | Quyền hạn chính |
+| :--- | :--- | :--- | :--- |
+| **Quản trị viên (Admin)** | `admin@paperpage.local` | `Admin@123456` | Toàn quyền hệ thống, xem nhật ký kiểm toán, cấu hình phân quyền |
+| **Thủ thư (Librarian)** | `demo-librarian@paperpage.local` | `Librarian@123` | Lập phiếu mượn/trả, thu tiền phạt, kiểm kê kho, quản lý sách |
+| **Độc giả (Reader)** | `demo-reader@paperpage.local` | `Reader@123` | Tra cứu sách, đặt trước FIFO, đánh giá, xem lịch sử mượn |
+
+---
+
+## 5. BỘ LỆNH KIỂM THỬ TỰ ĐỘNG (AUTOMATED TEST SUITE)
+
+Hệ thống tích hợp sẵn các kịch bản kiểm thử tự động, có thể thực thi ngay từ dòng lệnh:
+
+```bash
+# 1. Phân tích cú pháp tĩnh 170 tệp mã nguồn
+php tests/lint.php
+
+# 2. Kiểm thử luồng khởi tạo và các dịch vụ cơ bản
+php tests/run.php
+
+# 3. Kiểm thử phân hệ mượn trả & tính phí phạt
+php tests/test_v8_features.php
+
+# 4. Kiểm thử đợt kiểm kê tồn kho và quét mã vạch
+php tests/test_v8_inventory_audit_deep.php
+
+# 5. Kiểm thử độ bền & bảo mật trợ lý Chatbot
+php tests/test_v8_chatbot_hardening.php
+
+# 6. Kiểm tra các bất biến toàn vẹn dữ liệu CSDL
+php tests/postflight_check.php
+
+# 7. Kiểm thử tích hợp nghiệp vụ thực tế 3 vai trò
+php tests/test_v12_2_postflight_business.php
+
+# 8. Kiểm toán chỉ số CSDL độc lập (Read-only Metrics)
+php storage/verify_readonly_metrics.php
+```
+
+> **Kết quả nghiệm thu:** **100% PASS trên toàn bộ 93 tiêu chí kiểm định kỹ thuật**.
+
+---
+
+## 6. HỒ SƠ BÀN GIAO MÔN HỌC (SUBMISSION DOSSIER)
+
+Bộ tài liệu hoàn chỉnh phục vụ nộp môn và báo cáo đồ án được lưu trữ chi tiết trong thư mục `docs/submission/`:
+
+1. [01_GIOI_THIEU_DE_TAI.md](docs/submission/01_GIOI_THIEU_DE_TAI.md) — Tổng quan đề tài, mục tiêu và phạm vi dự án.
+2. [02_CONG_NGHE_MA_NGUON_MO.md](docs/submission/02_CONG_NGHE_MA_NGUON_MO.md) — Kiến trúc công nghệ mã nguồn mở & Bản quyền phần mềm tự do (FOSS Stack).
+3. [03_KIEN_TRUC_HE_THONG.md](docs/submission/03_KIEN_TRUC_HE_THONG.md) — Kiến trúc phần mềm MVC OOP, sơ đồ luồng & tổ chức mã nguồn.
+4. [04_SO_DO_USE_CASE_VA_PHAN_QUYEN.md](docs/submission/04_SO_DO_USE_CASE_VA_PHAN_QUYEN.md) — Sơ đồ Use Case, vai trò & Ma trận phân quyền hành động (RBAC).
+5. [05_SO_DO_ERD_VA_DATABASE.md](docs/submission/05_SO_DO_ERD_VA_DATABASE.md) — Bản thiết kế cơ sở dữ liệu (ERD, 29 bảng, ràng buộc toàn vẹn).
+6. [06_QUY_TRINH_NGHIEP_VU.md](docs/submission/06_QUY_TRINH_NGHIEP_VU.md) — Quy trình nghiệp vụ thư viện chuyên sâu (Circulation, Fines, Audit, FIFO Reservation).
+7. [07_HUONG_DAN_CAI_DAT_VA_TRIEN_KHAI.md](docs/submission/07_HUONG_DAN_CAI_DAT_VA_TRIEN_KHAI.md) — Hướng dẫn cài đặt, cấu hình môi trường & triển khai hệ thống.
+8. [08_HUONG_DAN_SU_DUNG.md](docs/submission/08_HUONG_DAN_SU_DUNG.md) — Sổ tay hướng dẫn sử dụng chi tiết cho Admin, Thủ thư và Độc giả.
+9. [09_BAO_CAO_KIEM_THU.md](docs/submission/09_BAO_CAO_KIEM_THU.md) — Báo cáo kiểm thử tự động, kết quả đối soát & ma trận QA.
+10. [10_HAN_CHE_VA_HUONG_PHAT_TRIEN.md](docs/submission/10_HAN_CHE_VA_HUONG_PHAT_TRIEN.md) — Đánh giá đồ án, các hạn chế thực tế & định hướng phát triển (Laravel 11+, RFID, Z39.50).
+
+---
+
+## 7. BẢN QUYỀN & GIẤY PHÉP (LICENSE)
+
+Dự án được phân phối dưới giấy phép **[MIT License](LICENSE)**. Toàn bộ mã nguồn mở tự do phục vụ mục đích nghiên cứu, học tập và phát triển ứng dụng quản lý thư viện phi thương mại.

@@ -40,4 +40,14 @@ Các quy tắc dưới đây phản ánh luồng hiện tại. Mức thời hạ
 
 - KPI và báo cáo lấy từ MySQL; phân biệt đầu sách, bản sao và lượt mượn.
 - Export CSV giới hạn số dòng/ngày theo service, xuất UTF-8 BOM; ô bắt đầu bằng ký tự spreadsheet formula được neutralize.
-- Báo cáo kho/phí riêng và concurrency hai session đã PASS; PDF ngoài phạm vi. Kho đếm copy vật lý, phiếu đếm DISTINCT loan_id. Ngừng thẻ phải hết sách/đặt trước/nợ; ngừng sách không xóa lịch sử đã đóng.
+- Báo cáo kho/phí riêng và concurrency hai session đã PASS; PDF mượn/trả/thu phí đã có với kiểm tra quyền và ownership. Kho đếm copy vật lý, phiếu đếm DISTINCT loan_id. Ngừng thẻ phải hết sách/đặt trước/nợ; ngừng sách không xóa lịch sử đã đóng.
+
+Mật khẩu/phiên cập nhật11/10: giới hạn72byte, không trim; đổi/reset thu hồi phiên khác. Xem AUDIT_REPORT_20261011.md.
+
+## Bổ sung ngày 1 — 11/10/2026
+
+- _request_key bắt buộc trên HTTP checkout/renew/payment; lặp cùng actor/operation/key/payload trả kết quả đã commit, không thu/gia hạn/lập phiếu thêm. Giao dịch lỗi rollback cả key.
+- Thẻ ngừng hoạt động/hết hạn không được gia hạn. Daily fine của item cũ và ledger gia hạn cũ không bị đổi khi lưu chính sách mới; gia hạn mới dùng policy hiện hành.
+- Ngừng sử dụng bản cuối vẫn giữ bản sao/lịch sử, tổng tồn phục vụ có thể bằng0. Chỉnh sách đã có chấp nhận0; tạo mới qua UI cần ít nhất1. Phục hồi bản sửa xong cập nhật tồn.
+- Category chưa phân loại là null trong MySQL/option0 ở form, là lựa chọn hợp lệ.
+- [Bằng chứng ngày 1](DAY1_BACKEND_REPORT_20261011.md).

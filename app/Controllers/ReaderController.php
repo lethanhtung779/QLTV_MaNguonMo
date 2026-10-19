@@ -38,7 +38,7 @@ final class ReaderController extends Controller
             'fines' => $fineBalance,
             'fineCharges' => (new FineRepository($this->db))->chargesForReader($readerId),
             'finePayments' => (new FineRepository($this->db))->paymentsForReader($readerId),
-            'books' => (new BookRepository($this->db))->search(),
+            'books' => (new BookRepository($this->db))->search('', 0, '', null, 0, 'newest', true),
             'maxRenewals' => (new SystemSettingRepository($this->db))->integer('max_renewals', 2, 0, 10),
         ]);
     }
@@ -122,18 +122,28 @@ final class ReaderController extends Controller
         $current = $_POST['current_password'] ?? '';
         $new = $_POST['new_password'] ?? '';
         $confirmation = $_POST['password_confirmation'] ?? '';
-        if (!is_string($current) || !is_string($new) || !is_string($confirmation)) {
+        if (!is_string($current) || !is_string($new) || !is_string($confirmation) || strlen($current) > 72 || str_contains($current, "\0")) {
             $this->fail('Thông tin mật khẩu không hợp lệ.', '/account/profile');
         }
         if (!$record || !password_verify($current, $record['password_hash'])) {
             $this->fail('Mật khẩu hiện tại không chính xác.', '/account/profile');
         }
-        if (strlen($new) > 72 || strlen($new) < 12 || !preg_match('/[A-Z]/', $new) || !preg_match('/[a-z]/', $new) ||
+        if (str_contains($new, "\0") || strlen($new) > 72 || strlen($new) < 12 || !preg_match('/[A-Z]/', $new) || !preg_match('/[a-z]/', $new) ||
             !preg_match('/[0-9]/', $new) || !hash_equals($new, $confirmation)) {
             $this->fail('Mật khẩu mới cần tối thiểu 12 ký tự, có chữ hoa, chữ thường, số và xác nhận trùng khớp.', '/account/profile');
         }
-        $repository->updatePassword((int) $user['id'], password_hash($new, PASSWORD_DEFAULT));
-        (new ActivityRepository($this->db))->log((int) $user['id'], 'password_changed', 'user', (int) $user['id'], 'Đổi mật khẩu tài khoản');
+        try {
+            $this->db->beginTransaction();
+            $passwordHash = password_hash($new, PASSWORD_DEFAULT);
+            $repository->updatePassword((int) $user['id'], $passwordHash);
+            (new ActivityRepository($this->db))->log((int) $user['id'], 'password_changed', 'user', (int) $user['id'], 'Đổi mật khẩu tài khoản');
+            $this->db->commit();
+        } catch (Throwable $exception) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            error_log('Reader password change failed: ' . $exception->getMessage());
+            $this->fail('Không thể đổi mật khẩu lúc này.', '/account/profile');
+        }
+        $_SESSION['user']['credential_version'] = hash('sha256', $passwordHash);
         Session::regenerate();
         $this->success('Đã đổi mật khẩu.', '/account/profile');
     }
@@ -184,7 +194,8 @@ final class ReaderController extends Controller
             $dueDate = (new LoanService($this->db, 5000))->renew(
                 request_int('item_id', 1),
                 (int) $user['id'],
-                (int) $user['reader_id']
+                (int) $user['reader_id'],
+                request_mutation_key()
             );
             $this->success('Đã gia hạn sách đến ' . date('d/m/Y', strtotime($dueDate)) . '.', '/account');
         } catch (RuntimeException $exception) {
@@ -193,6 +204,24 @@ final class ReaderController extends Controller
             error_log('Reader loan renewal error: ' . $exception->getMessage());
             $this->fail('Không thể gia hạn sách lúc này. Vui lòng thử lại sau.', '/account');
         }
+    }
+
+    public function bookshelf(): void
+    {
+        $user = $this->activeReader(require_auth(['reader']));
+        $readerId = (int) $user['reader_id'];
+        $favorites = (new \Library\Repositories\FavoriteRepository($this->db))->listForReader($readerId);
+        $loans = (new LoanRepository($this->db))->forReader($readerId);
+        $reservations = (new ReservationRepository($this->db))->forReader($readerId);
+
+        $this->render('reader/bookshelf', [
+            'title' => 'Tủ sách của tôi',
+            'user' => $user,
+            'reader' => (new ReaderRepository($this->db))->find($readerId),
+            'favorites' => $favorites,
+            'loans' => $loans,
+            'reservations' => $reservations,
+        ]);
     }
 
     private function activeReader(array $user): array

@@ -23,7 +23,7 @@ final class FineRepository
         );
     }
 
-    public function overdueItems(int $readerId): array
+    public function overdueItems(?int $readerId = null): array
     {
         $statement = $this->db->prepare(
             'SELECT li.id, li.due_date, li.daily_fine, li.returned_at, l.reader_id,
@@ -33,11 +33,11 @@ final class FineRepository
              JOIN loan_items li ON li.loan_id = l.id
              JOIN book_copies cp ON cp.id = li.book_copy_id
              JOIN books b ON b.id = cp.book_id
-             WHERE l.reader_id = :reader_id
-               AND li.due_date < COALESCE(li.returned_at, CURRENT_DATE)
+             WHERE ' . ($readerId === null ? '' : 'l.reader_id = :reader_id AND ') . '
+               li.due_date < COALESCE(li.returned_at, CURRENT_DATE)
              ORDER BY li.id'
         );
-        $statement->execute(['reader_id' => $readerId]);
+        $statement->execute($readerId === null ? [] : ['reader_id' => $readerId]);
         return $statement->fetchAll();
     }
 
@@ -64,7 +64,7 @@ final class FineRepository
             'reader_id' => $readerId,
             'charge_type' => $type,
             'amount' => $amount,
-            'description' => $description,
+            'description' => mb_substr($description, 0, 300),
             'deduplication_key' => $key,
             'assessed_by' => $assessedBy,
         ]);
@@ -78,7 +78,10 @@ final class FineRepository
         return $charge ?: null;
     }
 
-    public function chargesForReader(int $readerId): array
+    public function chargesForReader(int $readerId): array { return $this->charges($readerId); }
+    public function chargesForAll(): array { return $this->charges(null); }
+
+    private function charges(?int $readerId): array
     {
         $statement = $this->db->prepare(
             'SELECT fc.*, b.title, cp.copy_code,
@@ -91,10 +94,10 @@ final class FineRepository
              JOIN loan_items li ON li.id = fc.loan_item_id
              JOIN book_copies cp ON cp.id = li.book_copy_id
              JOIN books b ON b.id = cp.book_id
-             WHERE fc.reader_id = :reader_id
+             WHERE ' . ($readerId === null ? '1=1' : 'fc.reader_id = :reader_id') . '
              ORDER BY fc.created_at DESC, fc.id DESC'
         );
-        $statement->execute(['reader_id' => $readerId]);
+        $statement->execute($readerId === null ? [] : ['reader_id' => $readerId]);
         return $statement->fetchAll();
     }
 

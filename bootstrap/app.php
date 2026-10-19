@@ -13,11 +13,15 @@ date_default_timezone_set((string) Config::get('APP_TIMEZONE', 'Asia/Ho_Chi_Minh
 Session::start((string) Config::get('SESSION_NAME', 'paper_page_session'));
 
 if (PHP_SAPI !== 'cli') {
+    // Never expose PHP warnings and local filesystem paths in a public response.
+    // Keep diagnostic errors in the PHP error log instead.
+    ini_set('display_errors', '0');
+    ini_set('log_errors', '1');
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: DENY');
     header('Referrer-Policy: strict-origin-when-cross-origin');
-    header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
-    header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://covers.openlibrary.org https://images.unsplash.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'");
+    header('Permissions-Policy: camera=(self), microphone=(), geolocation=()');
+    header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://covers.openlibrary.org https://archive.org https://*.archive.org https://images.unsplash.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'");
 }
 
 Database::setConfig([

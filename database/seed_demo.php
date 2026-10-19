@@ -31,6 +31,9 @@ if (!in_array($databaseHost, ['localhost', '127.0.0.1', '::1'], true) ||
 function demoSecret(string $key, string $envFile): string
 {
     $secret = (string) Config::get($key, '');
+    if (strlen($secret) > 72 || str_contains($secret, "\0")) {
+        throw new RuntimeException('Mật khẩu demo tối đa 72 byte và không chứa byte NUL.');
+    }
     if (strlen($secret) >= 16 && !str_contains($secret, 'ChangeThis')) {
         return $secret;
     }

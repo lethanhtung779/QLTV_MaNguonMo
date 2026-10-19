@@ -18,11 +18,11 @@
 
 ## Migration và rollback
 
-Chạy `php database/setup.php` sau khi backup. Migration `001`–`006` được ghi trong `schema_migrations` và thiết kế additive; setup có thể chạy lại, không phải lệnh reset. Không xóa thủ công `schema_migrations` và không rollback bằng cách drop bảng. Nếu migration lỗi, giữ nguyên database, lưu log, khôi phục từ backup/nhờ DBA xử lý trước khi thử lại.
+Chạy `php database/setup.php` sau khi backup. Migration `001`–`008` được ghi trong `schema_migrations` và thiết kế additive; setup có thể chạy lại, không phải lệnh reset. Không xóa thủ công `schema_migrations` và không rollback bằng cách drop bảng. Nếu migration lỗi, giữ nguyên database, lưu log, khôi phục từ backup/nhờ DBA xử lý trước khi thử lại.
 
 ## Sau triển khai
 
 - Kiểm tra trang login, catalog, dashboard và các quyền route bằng tài khoản test.
 - Kiểm tra kết nối DB, log, backup/restore, TLS, cấu hình cookie và document root.
 - Không chạy fixture `tests/mysql_phase3.php` / `tests/mysql_phase4.php` trên production.
-- CLI database/maintenance.php hỗ trợ Task Scheduler để đồng bộ reminder/expiry/phí; xem INSTALLATION_GUIDE.md. Chưa hỗ trợ PDF/upload/CI deployment. Test ghi bị guard theo database test riêng.
+- CLI database/maintenance.php hỗ trợ Task Scheduler để đồng bộ reminder/expiry/phí; xem INSTALLATION_GUIDE.md. Đã hỗ trợ PDF/upload; CI deployment chưa có. Restore local đã đối chiếu24bảng ngày11/10; production chưa kiểm chứng. Test ghi bị guard theo database test riêng.

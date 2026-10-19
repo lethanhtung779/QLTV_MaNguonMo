@@ -11,7 +11,7 @@ foreach ($iterator as $file) {
         continue;
     }
     $path = $file->getPathname();
-    if (str_contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR)) {
+    if (str_contains($path, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR) || str_contains($path, DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR)) {
         continue;
     }
     $files[] = $path;

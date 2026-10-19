@@ -36,15 +36,17 @@ CREATE TABLE IF NOT EXISTS books (
     total_copies INT UNSIGNED NOT NULL DEFAULT 1,
     cover_url VARCHAR(500) NULL,
     is_active TINYINT(1) NOT NULL DEFAULT 1,
+    is_public TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uq_books_code (book_code),
     UNIQUE KEY uq_books_isbn (isbn),
     KEY idx_books_title_author (title, author),
+    KEY idx_books_public_active (is_public, is_active),
     KEY idx_books_category_active (category_id, is_active),
     CONSTRAINT fk_books_category FOREIGN KEY (category_id) REFERENCES categories (id) ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT chk_books_copies CHECK (total_copies >= 1),
+    CONSTRAINT chk_books_copies CHECK (total_copies >= 0),
     CONSTRAINT chk_books_year CHECK (publication_year IS NULL OR publication_year BETWEEN 1 AND 2100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

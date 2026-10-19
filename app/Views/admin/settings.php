@@ -14,14 +14,14 @@
         <label>Số ngày mỗi lần gia hạn<input type="number" name="renewal_days" min="1" max="90" value="<?= (int) $renewalDays ?>" required></label>
         <label>Phí quá hạn mỗi ngày (đ)<input type="number" name="fine_per_overdue_day" min="0" max="10000000" step="0.01" value="<?= e((string) $dailyFine) ?>" required></label>
         <label>Thời hạn nhận sách đặt trước (ngày)<input type="number" name="reservation_expiry_days" min="1" max="30" value="<?= (int) $reservationExpiryDays ?>" required></label>
-        <label>Phí sách hỏng (đ)<input type="number" name="damaged_copy_fine" min="0" max="100000000" step="0.01" value="<?= e((string) $damagedCopyFine) ?>" required></label>
-        <label>Phí sách mất (đ)<input type="number" name="lost_copy_fine" min="0" max="100000000" step="0.01" value="<?= e((string) $lostCopyFine) ?>" required></label>
+        <label>Phí sách hỏng (đ)<input type="number" name="damaged_copy_fine" min="0" max="99999999" step="0.01" value="<?= e((string) $damagedCopyFine) ?>" required></label>
+        <label>Phí sách mất (đ)<input type="number" name="lost_copy_fine" min="0" max="99999999" step="0.01" value="<?= e((string) $lostCopyFine) ?>" required></label>
       </div>
       <div class="dialog-actions"><button class="button button-primary">Lưu chính sách</button></div>
     </form>
   </section>
   <section class="panel">
-    <div class="panel-heading"><div><span class="eyebrow">MÔI TRƯỜNG MÁY CHỦ</span><h2>Thông tin vận hành</h2></div><span class="status-pill <?= $environment === 'production' ? 'returned' : 'borrowed' ?>"><?= e($environment) ?></span></div>
+    <div class="panel-heading"><div><span class="eyebrow">MÔI TRƯỜNG MÁY CHỦ</span><h2>Thông tin vận hành</h2></div><span class="status-pill <?= $environment === 'production' ? 'returned' : 'borrowed' ?>"><?= e(ui_label($environment, 'environment')) ?></span></div>
     <dl class="settings-list">
       <div><dt>Chế độ gỡ lỗi</dt><dd><?= $debug ? 'Đang bật' : 'Đã tắt' ?></dd></div>
       <div><dt>Múi giờ</dt><dd><?= e($timezone) ?></dd></div>

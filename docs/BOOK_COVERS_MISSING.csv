@@ -1,0 +1,31 @@
+﻿id,book_code,title,author,isbn,publisher,publication_year,status,reason
+1,B001,Giết con chim nhại,Harper Lee,9780060935467,Nhà xuất bản Văn học,2015,CẦN BỔ SUNG,ISBN trả về bìa ứng viên nhưng tên/ấn bản tiếng Anh và năm/NXB không khớp hoặc mâu thuẫn với MySQL; chưa đủ căn cứ gắn bìa.
+2,B002,Sapiens: Lược sử loài người,Yuval Noah Harari,9780062316097,Harper,2017,CẦN BỔ SUNG,ISBN trả về bìa ứng viên nhưng tên/ấn bản tiếng Anh và năm/NXB không khớp hoặc mâu thuẫn với MySQL; chưa đủ căn cứ gắn bìa.
+3,B003,Trí tuệ xúc cảm,Daniel Goleman,9780553383713,Bantam,2018,CẦN BỔ SUNG,ISBN trả về bìa ứng viên nhưng tên/ấn bản tiếng Anh và năm/NXB không khớp hoặc mâu thuẫn với MySQL; chưa đủ căn cứ gắn bìa.
+4,B004,Nhà giả kim,Paulo Coelho,9780061122415,HarperOne,2016,CẦN BỔ SUNG,ISBN trả về bìa ứng viên nhưng tên/ấn bản tiếng Anh và năm/NXB không khớp hoặc mâu thuẫn với MySQL; chưa đủ căn cứ gắn bìa.
+5,B005,Harry Potter và Hòn đá phù thủy,J.K. Rowling,9780590353427,Bloomsbury,2014,CẦN BỔ SUNG,ISBN trả về bìa ứng viên nhưng tên/ấn bản tiếng Anh và năm/NXB không khớp hoặc mâu thuẫn với MySQL; chưa đủ căn cứ gắn bìa.
+6,B006,Vật lý lý thú,Y. Perelman,,Nhà xuất bản Giáo dục,2019,CẦN BỔ SUNG,Không ISBN; tra cứu tên + tác giả không có kết quả; cần ISBN/ấn bản và nguồn bìa được phép.
+7,B007,Nền kinh tế tăng trưởng và thịnh vượng,William Bernstein,,Nhà xuất bản Trẻ,2020,CẦN BỔ SUNG,Không ISBN; tra cứu tên + tác giả không có kết quả; cần ISBN/ấn bản và nguồn bìa được phép.
+8,B008,HTML & CSS – Thiết kế Web,Jon Duckett,9781118008188,Wiley,2021,CẦN BỔ SUNG,ISBN trả về bìa ứng viên nhưng tên/ấn bản tiếng Anh và năm/NXB không khớp hoặc mâu thuẫn với MySQL; chưa đủ căn cứ gắn bìa.
+9,B009,Kiến thức lập trình cơ bản,Nguyễn Văn A,,Nhà xuất bản Khoa học,2022,CẦN BỔ SUNG,Không ISBN; tra cứu tên + tác giả không có kết quả; cần ISBN/ấn bản và nguồn bìa được phép.
+158,DEMO-B001,Tủ sách minh họa Paper & Page 01,Tác giả minh họa 01,,Nhà xuất bản minh họa,2007,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+159,DEMO-B002,Tủ sách minh họa Paper & Page 02,Tác giả minh họa 02,,Nhà xuất bản minh họa,2014,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+160,DEMO-B003,Tủ sách minh họa Paper & Page 03,Tác giả minh họa 03,,Nhà xuất bản minh họa,2021,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+161,DEMO-B004,Tủ sách minh họa Paper & Page 04,Tác giả minh họa 04,,Nhà xuất bản minh họa,2003,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+162,DEMO-B005,Tủ sách minh họa Paper & Page 05,Tác giả minh họa 05,,Nhà xuất bản minh họa,2010,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+163,DEMO-B006,Tủ sách minh họa Paper & Page 06,Tác giả minh họa 06,,Nhà xuất bản minh họa,2017,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+164,DEMO-B007,Tủ sách minh họa Paper & Page 07,Tác giả minh họa 07,,Nhà xuất bản minh họa,2024,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+165,DEMO-B008,Tủ sách minh họa Paper & Page 08,Tác giả minh họa 08,,Nhà xuất bản minh họa,2006,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+166,DEMO-B009,Tủ sách minh họa Paper & Page 09,Tác giả minh họa 09,,Nhà xuất bản minh họa,2013,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+167,DEMO-B010,Tủ sách minh họa Paper & Page 10,Tác giả minh họa 10,,Nhà xuất bản minh họa,2020,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+168,DEMO-B011,Tủ sách minh họa Paper & Page 11,Tác giả minh họa 11,,Nhà xuất bản minh họa,2002,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+169,DEMO-B012,Tủ sách minh họa Paper & Page 12,Tác giả minh họa 12,,Nhà xuất bản minh họa,2009,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+170,DEMO-B013,Tủ sách minh họa Paper & Page 13,Tác giả minh họa 13,,Nhà xuất bản minh họa,2016,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+171,DEMO-B014,Tủ sách minh họa Paper & Page 14,Tác giả minh họa 14,,Nhà xuất bản minh họa,2023,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+172,DEMO-B015,Tủ sách minh họa Paper & Page 15,Tác giả minh họa 15,,Nhà xuất bản minh họa,2005,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+173,DEMO-B016,Tủ sách minh họa Paper & Page 16,Tác giả minh họa 16,,Nhà xuất bản minh họa,2012,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+174,DEMO-B017,Tủ sách minh họa Paper & Page 17,Tác giả minh họa 17,,Nhà xuất bản minh họa,2019,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+175,DEMO-B018,Tủ sách minh họa Paper & Page 18,Tác giả minh họa 18,,Nhà xuất bản minh họa,2001,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+176,DEMO-B019,Tủ sách minh họa Paper & Page 19,Tác giả minh họa 19,,Nhà xuất bản minh họa,2008,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+177,DEMO-B020,Tủ sách minh họa Paper & Page 20,Tác giả minh họa 20,,Nhà xuất bản minh họa,2015,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.
+178,DEMO-B021,Tủ sách minh họa Paper & Page 21,Tác giả minh họa 21,,Nhà xuất bản minh họa,2022,CẦN BỔ SUNG,Dữ liệu ghi rõ sách/tác giả minh họa; không ISBN; tra cứu tên + tác giả không có kết quả.

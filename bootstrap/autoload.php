@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+$vendor = dirname(__DIR__) . '/vendor/autoload.php';
+if (is_file($vendor)) require_once $vendor;
+
 spl_autoload_register(static function (string $class): void {
     $prefix = 'Library\\';
     if (!str_starts_with($class, $prefix)) {

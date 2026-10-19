@@ -21,7 +21,7 @@ final class ReservationRepository
     public function forReader(int $readerId): array
     {
         $statement = $this->db->prepare(
-            'SELECT res.*, b.book_code, b.title, b.author, cp.copy_code
+            'SELECT res.*, b.book_code, b.title, b.author, b.isbn, b.cover_url, b.category_id, cp.copy_code
              FROM reservations res JOIN books b ON b.id = res.book_id
              LEFT JOIN book_copies cp ON cp.id = res.book_copy_id
              WHERE res.reader_id = :reader_id ORDER BY res.reserved_at DESC'

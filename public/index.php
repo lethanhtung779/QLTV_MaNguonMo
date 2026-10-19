@@ -42,8 +42,9 @@ try {
 
     http_response_code(500);
     $debug = Config::bool('APP_DEBUG', false) && Config::get('APP_ENV', 'production') !== 'production';
+    // The staff layout reads permissions from MySQL; error rendering must not need it.
     View::render('errors/500', [
         'title' => 'Có lỗi xảy ra',
         'debugMessage' => $debug ? $exception->getMessage() : null,
-    ], current_user() ? 'layouts/app' : 'layouts/public');
+    ], 'layouts/public');
 }

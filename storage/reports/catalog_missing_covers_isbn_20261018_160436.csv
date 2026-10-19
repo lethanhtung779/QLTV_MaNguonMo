@@ -1,0 +1,181 @@
+﻿id,book_code,title,author,publisher,publication_year,isbn,isbn_status,cover_url_in_db,renderable_cover_status,is_active,is_public
+1,B001,"Giết con chim nhại","Harper Lee","Nhà xuất bản Văn học",2015,9780060935467,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b001-to-kill-a-mockingbird.webp,LOCAL_FILE_EXISTS,1,1
+2,B002,"Sapiens: Lược sử loài người","Yuval Noah Harari",Harper,2017,9780062316097,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b002-sapiens-luoc-su-loai-nguoi.webp,LOCAL_FILE_EXISTS,1,1
+3,B003,"Trí tuệ xúc cảm","Daniel Goleman",Bantam,2018,9780553383713,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b003-emotional-intelligence.webp,LOCAL_FILE_EXISTS,1,1
+4,B004,"Nhà giả kim","Paulo Coelho",HarperOne,2016,9780061122415,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b004-the-alchemist.webp,LOCAL_FILE_EXISTS,1,1
+5,B005,"Harry Potter và Hòn đá phù thủy","J.K. Rowling",Bloomsbury,2014,9780590353427,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b005-harry-potter.webp,LOCAL_FILE_EXISTS,1,1
+6,B006,"Vật lý lý thú","Y. Perelman","Nhà xuất bản Giáo dục Việt Nam",2019,9786040182845,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+7,B007,"Nền kinh tế tăng trưởng và thịnh vượng","William Bernstein","Nhà xuất bản Trẻ",2020,9786041169388,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+8,B008,"HTML & CSS – Thiết kế Web","Jon Duckett",Wiley,2021,9781118008188,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b008-html-css.webp,LOCAL_FILE_EXISTS,1,1
+9,B009,"Kiến thức lập trình cơ bản","Nguyễn Văn A","Nhà xuất bản Khoa học",2022,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+158,DEMO-B001,"Tủ sách minh họa Paper & Page 01","Tác giả minh họa 01","Nhà xuất bản minh họa",2007,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+159,DEMO-B002,"Tủ sách minh họa Paper & Page 02","Tác giả minh họa 02","Nhà xuất bản minh họa",2014,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+160,DEMO-B003,"Tủ sách minh họa Paper & Page 03","Tác giả minh họa 03","Nhà xuất bản minh họa",2021,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+161,DEMO-B004,"Tủ sách minh họa Paper & Page 04","Tác giả minh họa 04","Nhà xuất bản minh họa",2003,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+162,DEMO-B005,"Tủ sách minh họa Paper & Page 05","Tác giả minh họa 05","Nhà xuất bản minh họa",2010,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+163,DEMO-B006,"Tủ sách minh họa Paper & Page 06","Tác giả minh họa 06","Nhà xuất bản minh họa",2017,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+164,DEMO-B007,"Tủ sách minh họa Paper & Page 07","Tác giả minh họa 07","Nhà xuất bản minh họa",2024,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+165,DEMO-B008,"Tủ sách minh họa Paper & Page 08","Tác giả minh họa 08","Nhà xuất bản minh họa",2006,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+166,DEMO-B009,"Tủ sách minh họa Paper & Page 09","Tác giả minh họa 09","Nhà xuất bản minh họa",2013,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+167,DEMO-B010,"Tủ sách minh họa Paper & Page 10","Tác giả minh họa 10","Nhà xuất bản minh họa",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+168,DEMO-B011,"Tủ sách minh họa Paper & Page 11","Tác giả minh họa 11","Nhà xuất bản minh họa",2002,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+169,DEMO-B012,"Tủ sách minh họa Paper & Page 12","Tác giả minh họa 12","Nhà xuất bản minh họa",2009,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+170,DEMO-B013,"Tủ sách minh họa Paper & Page 13","Tác giả minh họa 13","Nhà xuất bản minh họa",2016,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+171,DEMO-B014,"Tủ sách minh họa Paper & Page 14","Tác giả minh họa 14","Nhà xuất bản minh họa",2023,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+172,DEMO-B015,"Tủ sách minh họa Paper & Page 15","Tác giả minh họa 15","Nhà xuất bản minh họa",2005,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+173,DEMO-B016,"Tủ sách minh họa Paper & Page 16","Tác giả minh họa 16","Nhà xuất bản minh họa",2012,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+174,DEMO-B017,"Tủ sách minh họa Paper & Page 17","Tác giả minh họa 17","Nhà xuất bản minh họa",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+175,DEMO-B018,"Tủ sách minh họa Paper & Page 18","Tác giả minh họa 18","Nhà xuất bản minh họa",2001,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+176,DEMO-B019,"Tủ sách minh họa Paper & Page 19","Tác giả minh họa 19","Nhà xuất bản minh họa",2008,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+177,DEMO-B020,"Tủ sách minh họa Paper & Page 20","Tác giả minh họa 20","Nhà xuất bản minh họa",2015,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+178,DEMO-B021,"Tủ sách minh họa Paper & Page 21","Tác giả minh họa 21","Nhà xuất bản minh họa",2022,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,0
+222,SE-4AF6489C137F,"Pride and Prejudice","Jane Austen","Standard Ebooks",2014,,MISSING_UNVERIFIED,/assets/book-covers/se-4af6489c137f-7e256dbd59e6.jpg,LOCAL_FILE_EXISTS,1,1
+223,SE-FA0F2ED703F0,"Sense and Sensibility","Jane Austen","Standard Ebooks",2019,,MISSING_UNVERIFIED,/assets/book-covers/se-fa0f2ed703f0-7ed72eb4a251.jpg,LOCAL_FILE_EXISTS,1,1
+224,SE-0A571FE5198E,Emma,"Jane Austen","Standard Ebooks",2018,,MISSING_UNVERIFIED,/assets/book-covers/se-0a571fe5198e-6050565ab751.jpg,LOCAL_FILE_EXISTS,1,1
+225,SE-0C8A9E332BC1,"Alice’s Adventures in Wonderland","Lewis Carroll","Standard Ebooks",2014,,MISSING_UNVERIFIED,/assets/book-covers/se-0c8a9e332bc1-f2cca5b8483f.jpg,LOCAL_FILE_EXISTS,1,1
+226,SE-963C9E3127FF,"Through the Looking-Glass","Lewis Carroll","Standard Ebooks",2017,,MISSING_UNVERIFIED,/assets/book-covers/se-963c9e3127ff-954568cad7f7.jpg,LOCAL_FILE_EXISTS,1,1
+227,SE-8E336F755537,"The Picture of Dorian Gray","Oscar Wilde","Standard Ebooks",2014,,MISSING_UNVERIFIED,/assets/book-covers/se-8e336f755537-bb4e2d258023.jpg,LOCAL_FILE_EXISTS,1,1
+228,SE-1A523E0D9BC9,Frankenstein,"Mary Shelley","Standard Ebooks",2015,,MISSING_UNVERIFIED,/assets/book-covers/se-1a523e0d9bc9-3c7e1e5aa180.jpg,LOCAL_FILE_EXISTS,1,1
+229,SE-E04798A34809,Dracula,"Bram Stoker","Standard Ebooks",2014,,MISSING_UNVERIFIED,/assets/book-covers/se-e04798a34809-e3eafa8bd0e9.jpg,LOCAL_FILE_EXISTS,1,1
+230,SE-141AE7FB7238,"Treasure Island","Robert Louis Stevenson","Standard Ebooks",2015,,MISSING_UNVERIFIED,/assets/book-covers/se-141ae7fb7238-03a82d303510.jpg,LOCAL_FILE_EXISTS,1,1
+231,SE-A084D48849EB,"A Tale of Two Cities","Charles Dickens","Standard Ebooks",2019,,MISSING_UNVERIFIED,/assets/book-covers/se-a084d48849eb-69bcb2169433.jpg,LOCAL_FILE_EXISTS,1,1
+232,SE-AE44378E3A31,"Great Expectations","Charles Dickens","Standard Ebooks",2019,,MISSING_UNVERIFIED,/assets/book-covers/se-ae44378e3a31-533811ba2386.jpg,LOCAL_FILE_EXISTS,1,1
+233,SE-3467BE4B7557,"The Great Gatsby","F. Scott Fitzgerald","Standard Ebooks",2021,,MISSING_UNVERIFIED,/assets/book-covers/se-3467be4b7557-abd8905a5308.jpg,LOCAL_FILE_EXISTS,1,1
+234,CAT-AFA34C9E251B,"The Wealth of Nations","Adam Smith","Standard Ebooks",2021,,MISSING_UNVERIFIED,/assets/book-covers/cat-afa34c9e251b-64a1c6e2cf05.jpg,LOCAL_FILE_EXISTS,1,1
+235,CAT-8E38F161D001,"The Origin of Species","Charles Darwin","Standard Ebooks",2019,,MISSING_UNVERIFIED,/assets/book-covers/cat-8e38f161d001-9da6ec5e3289.jpg,LOCAL_FILE_EXISTS,1,1
+236,CAT-58CBB47B10B1,"History of the Peloponnesian War",Thucydides,"Standard Ebooks",2024,,MISSING_UNVERIFIED,/assets/book-covers/cat-58cbb47b10b1-f197a32bd5a3.jpg,LOCAL_FILE_EXISTS,1,1
+237,CAT-1762E3160175,"Human Nature and Conduct","John Dewey","Standard Ebooks",2024,,MISSING_UNVERIFIED,/assets/book-covers/cat-1762e3160175-e3eff5f5cef0.jpg,LOCAL_FILE_EXISTS,1,1
+238,CAT-8B07C1EB4F53,"Peter and Wendy","J. M. Barrie","Standard Ebooks",2017,,MISSING_UNVERIFIED,/assets/book-covers/cat-8b07c1eb4f53-6d46cbd90dd3.jpg,LOCAL_FILE_EXISTS,1,1
+239,CAT-THINK-PYTHON-2012,"Think Python: How to Think Like a Computer Scientist","Allen B. Downey","Green Tea Press",2012,,MISSING_UNVERIFIED,/assets/book-covers/cat-think-python-2012-d5e832c00f21.jpg,LOCAL_FILE_EXISTS,1,1
+240,CAT-LIBREOFFICE-GS75,"LibreOffice 7.5 Getting Started Guide","LibreOffice Documentation Team","The Document Foundation",2023,,MISSING_UNVERIFIED,/assets/book-covers/cat-libreoffice-gs75-4c8391acfe95.jpg,LOCAL_FILE_EXISTS,1,1
+241,B101,"Số đỏ","Vũ Trọng Phụng","NXB Văn học",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+242,B102,"Tắt đèn","Ngô Tất Tố","NXB Văn học",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+243,B103,"Chí Phèo","Nam Cao","NXB Văn học",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+244,B104,"Vang bóng một thời","Nguyễn Tuân","NXB Hội Nhà Văn",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+245,B105,"Dế Mèn phiêu lưu ký","Tô Hoài","NXB Kim Đồng",2020,978-604-2-03054-0,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+246,B106,"Ông già và biển cả","Ernest Hemingway","NXB Văn học",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+247,B107,"Chiến tranh và hòa bình","Lev Tolstoy","NXB Văn học",2017,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+248,B108,"Không gia đình","Hector Malot","NXB Văn học",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+249,B109,"Ruồi trâu","Ethel Lilian Voynich","NXB Văn học",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+250,B110,"Tôi thấy hoa vàng trên cỏ xanh","Nguyễn Nhật Ánh","NXB Trẻ",2015,978-604-1-00069-8,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+251,B201,"Giáo trình C++ & Lập trình hướng đối tượng","GS. Phạm Văn Ất","NXB Bách Khoa Hà Nội",2019,9786049503368,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b201-giao-trinh-c-plus-plus.webp,LOCAL_FILE_EXISTS,1,1
+252,B202,"Cấu trúc dữ liệu và giải thuật","Đỗ Xuân Lôi","NXB Đại học Quốc gia Hà Nội",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+253,B203,"Clean Code: A Handbook of Agile Software Craftsmanship","Robert C. Martin","Prentice Hall",2008,978-0-13-235088-4,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b203-clean-code.webp,LOCAL_FILE_EXISTS,1,1
+254,B204,"Design Patterns: Elements of Reusable Object-Oriented Software","Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",Addison-Wesley,1994,978-0-201-63361-0,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b204-design-patterns.webp,LOCAL_FILE_EXISTS,1,1
+255,B205,"Nhập môn Trí tuệ nhân tạo","PGS.TS. Đinh Điền","NXB Đại học Quốc gia TP.HCM",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+256,B206,"Hệ quản trị cơ sở dữ liệu và SQL","ThS. Nguyễn Kim Oanh","NXB Thông tin và Truyền thông",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+257,B207,"Mạng máy tính và truyền thông","TS. Nguyễn Hồng Sơn","NXB Bưu điện",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+258,B208,"An toàn thông tin và mật mã học ứng dụng","TS. Trần Đăng Hoan","NXB Khoa học và Kỹ thuật",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+259,B209,"Lập trình Web hiện đại với PHP và MySQL","KS. Đặng Văn Nam","NXB Thanh Niên",2021,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+260,B210,"Introduction to Algorithms","Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein","MIT Press",2009,978-0-262-03384-8,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+261,B301,"Lược sử thời gian","Stephen Hawking","NXB Trẻ",2019,978-604-1-01204-2,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/b301-luoc-su-thoi-gian.webp,LOCAL_FILE_EXISTS,1,1
+262,B302,"Vũ trụ trong vỏ hạt dẻ","Stephen Hawking","NXB Trẻ",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+263,B303,"Vũ trụ","Carl Sagan","NXB Tri Thức",2017,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+264,B304,"Gen vị kỷ","Richard Dawkins","NXB Tri Thức",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+265,B305,"Hóa học vui","L. Vlasov, D. Trifonov","NXB Khoa học và Kỹ thuật",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+266,B306,"Toán học một chuyến phiêu lưu","Đặng Hùng Thắng","NXB Giáo dục Việt Nam",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+267,B307,"Sáu mảnh ghép vật lý","Richard Feynman","NXB Trẻ",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+268,B308,"Lược sử vạn vật","Bill Bryson","NXB Tri Thức",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+269,B309,"Hành trình của các nguyên tố","Đặng Vũ Khắc","NXB Khoa học Tự nhiên và Công nghệ",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+270,B310,"Bản thiết kế vĩ đại","Stephen Hawking, Leonard Mlodinow","NXB Trẻ",2016,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+271,B401,"Kinh tế học vi mô","PGS.TS. Nguyễn Văn Ngọc","NXB Đại học Kinh tế Quốc dân",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+272,B402,"Kinh tế học vĩ mô","GS.TS. Nguyễn Tử Mềnh","NXB Thống kê",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+273,B403,"Kinh tế học hài hước","Steven D. Levitt, Stephen J. Dubner","NXB Lao Động",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+274,B404,"Kinh tế học dành cho đại chúng","Charles Wheelan","NXB Lao Động Xã Hội",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+275,B405,"Tư duy nhanh và chậm","Daniel Kahneman","NXB Thế Giới",2019,978-604-77-5576-9,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+276,B406,"Chiến lược đại dương xanh","W. Chan Kim, Renée Mauborgne","NXB Lao Động",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+277,B407,"Nhà đầu tư thông minh","Benjamin Graham","NXB Lao Động Xã Hội",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+278,B408,"Cú hích","Richard H. Thaler, Cass R. Sunstein","NXB Trẻ",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+279,B409,"Tại sao các quốc gia thất bại","Daron Acemoglu, James A. Robinson","NXB Trẻ",2017,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+280,B410,"Nguyên lý kinh tế học","N. Gregory Mankiw","NXB Hồng Đức",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+281,B501,"Đại Việt sử ký toàn thư","Ngô Sĩ Liên","NXB Khoa học Xã hội",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+282,B502,"Việt Nam sử lược","Trần Trọng Kim","NXB Văn học",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+283,B503,"Lịch sử văn minh thế giới","Vũ Dương Ninh","NXB Giáo dục Việt Nam",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+284,B504,"Súng, vi trùng và thép","Jared Diamond","NXB Thế Giới",2019,978-604-77-8931-3,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+285,B505,"Lịch sử triết học phương Tây","Will Durant","NXB Hồng Đức",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+286,B506,"Hào khí Đông A","Hoàng Quốc Hải","NXB Phụ Nữ",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+287,B507,"Cách mạng công nghiệp lần thứ tư","Klaus Schwab","NXB Chính trị Quốc gia Sự thật",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+288,B508,"Lịch sử bang giao Việt Nam qua các thời đại","Nguyễn Thế Anh","NXB Tri Thức",2017,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+289,B509,"21 bài học cho thế kỷ 21","Yuval Noah Harari","NXB Thế Giới",2019,978-604-392-282-0,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+290,B510,"Chiến tranh thế giới thứ hai: Toàn cảnh lịch sử","Antony Beevor","NXB Công an Nhân dân",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+291,B601,"Đắc nhân tâm","Dale Carnegie","NXB Tổng hợp TP.HCM",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+292,B602,"Quẳng gánh lo đi và vui sống","Dale Carnegie","NXB Tổng hợp TP.HCM",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+293,B603,"Đi tìm lẽ sống","Viktor E. Frankl","NXB Tổng hợp TP.HCM",2018,978-604-335-644-1,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+294,B604,"7 thói quen để thành đạt","Stephen R. Covey","NXB Tổng hợp TP.HCM",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+295,B605,"Dám bị ghét","Ichiro Kishimi, Fumitake Koga","NXB Lao Động",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+296,B606,"Tâm lý học đám đông","Gustave Le Bon","NXB Tri Thức",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+297,B607,"Hiểu về trái tim","Thầy Minh Niệm","NXB Tổng hợp TP.HCM",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+298,B608,"Lối sống tối giản của người Nhật","Fumio Sasaki","NXB Lao Động",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+299,B609,"Đọc vị bất kỳ ai","David J. Lieberman","NXB Lao Động Xã Hội",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+300,B610,"Sức mạnh của thói quen","Charles Duhigg","NXB Lao Động Xã Hội",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+301,B701,"Kính vạn hoa","Nguyễn Nhật Ánh","NXB Kim Đồng",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+302,B702,"Góc sân và khoảng trời","Trần Đăng Khoa","NXB Kim Đồng",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+303,B703,"Hoàng tử bé","Antoine de Saint-Exupéry","NXB Kim Đồng",2020,978-604-2-35413-4,CHECKSUM_VALID_EDITION_NOT_PROVEN,,NO_CONFIRMED_COVER,1,1
+304,B704,"Những cuộc phiêu lưu của Tom Sawyer","Mark Twain","NXB Văn học",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+305,B705,"Truyện cổ tích Andersen","Hans Christian Andersen","NXB Kim Đồng",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+306,B706,"Truyện cổ Grimm","Jacob & Wilhelm Grimm","NXB Văn học",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+307,B707,"Totto-chan bên cửa sổ","Tetsuko Kuroyanagi","NXB Kim Đồng",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+308,B708,"Đất rừng phương Nam","Đoàn Giỏi","NXB Kim Đồng",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+309,B709,"Vừa nhắm mắt vừa mở cửa sổ","Nguyễn Ngọc Thuần","NXB Trẻ",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+310,B710,"Bác sĩ Ai-bô-lít","Korney Chukovsky","NXB Kim Đồng",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+311,B801,"Giáo trình Kỹ thuật Soạn thảo Văn bản Quản lý Nhà nước","Học viện Hành chính Quốc gia","NXB Bách Khoa Hà Nội",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+312,B802,"Kỹ năng Hành chính Văn phòng Chuyên nghiệp","ThS. Đỗ Thị Yên","NXB Lao Động",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+313,B803,"Lập kế hoạch và Tổ chức Hội họp Hiệu quả","TS. Nguyễn Thị Thu Hà","NXB Tài chính",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+314,B804,"Quản lý Hồ sơ Tài liệu và Lưu trữ Điện tử","PGS.TS. Vũ Thị Phụng","NXB Đại học Quốc gia Hà Nội",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+315,B805,"Giao tiếp và Ứng xử Nơi Công sở Hiện đại","TS. Huỳnh Văn Sơn","NXB Tổng hợp TP.HCM",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+316,B806,"Kỹ năng Quản lý Thời gian và Tổ chức Công việc","Brian Tracy","NXB Lao Động Xã Hội",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+317,B807,"Excel Ứng dụng trong Kế toán và Phân tích Dữ liệu Văn phòng","ThS. Lê Hữu Lương","NXB Thống kê",2020,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+318,B808,"Nghệ thuật Thuyết trình và Báo cáo Trước Đám đông","Carmine Gallo","NXB Lao Động",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+319,B809,"Kỹ năng Soạn thảo Hợp đồng Thương mại và Văn bản Pháp lý","Luật sư Nguyễn Ngọc Bích","NXB Trẻ",2018,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+320,B810,"Quản trị Nhân sự và Đánh giá Hiệu quả Công việc KPI","Dave Ulrich","NXB Tổng hợp TP.HCM",2019,,MISSING_UNVERIFIED,,NO_CONFIRMED_COVER,1,1
+321,AUTH-001,"Dốc Hết Trái Tim (Pour Your Heart Into It)","Howard Schultz, Dori Jones Yang","Nhà xuất bản Trẻ",2019,9786041266841,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-001-doc-het-trai-tim.webp,LOCAL_FILE_EXISTS,1,1
+322,AUTH-002,"Giấc Mơ Phá Kỷ Lục Champions League (The Dream)","Carlo Ancelotti, Chris Brady","Nhà xuất bản Trẻ",2024,9786041281257,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-002-giac-mo-pha-ky-luc-champions-league.webp,LOCAL_FILE_EXISTS,1,1
+323,AUTH-003,"Nhượng Quyền Khởi Nghiệp - Con Đường Ngắn Để Bước Ra Thế Giới","Nguyễn Phi Vân","Nhà xuất bản Trẻ",2020,9786041139305,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-003-nhuong-quyen-khoi-nghiep.webp,LOCAL_FILE_EXISTS,1,1
+324,AUTH-004,"Từ Bỏ Để Tự Do - Chiến Lược Rút Lui Để Tiến Xa Hơn","Julia Keller","Nhà xuất bản Trẻ",2024,,MISSING_UNVERIFIED,/assets/book-covers/auth-004-tu-bo-de-tu-do.webp,LOCAL_FILE_EXISTS,1,1
+325,AUTH-005,"Đừng Bao Giờ Lãnh Đạo Một Mình (Never Lead Alone)","Keith Ferrazzi, Paul Hill","Nhà xuất bản Trẻ",2025,9786041274297,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-005-dung-bao-gio-lanh-dao-mot-minh.webp,LOCAL_FILE_EXISTS,1,1
+326,AUTH-006,"Làm Ít Được Nhiều - Bài Học Từ Những Người Làm Việc Hiệu Quả Nhất","Morten T. Hansen","Nhà xuất bản Trẻ",2023,9786041275911,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-006-lam-it-duoc-nhieu.webp,LOCAL_FILE_EXISTS,1,1
+327,AUTH-007,"Quyền Lực Hướng Thiện (Good Power)","Ginni Rometty","Nhà xuất bản Trẻ",2024,9786041277748,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-007-quyen-luc-huong-thien.webp,LOCAL_FILE_EXISTS,1,1
+328,AUTH-008,"Tư Duy Đầu Nguồn - Giải Quyết Vấn Đề Từ Trong Trứng Nước (Upstream)","Dan Heath","Nhà xuất bản Trẻ",2022,9786041280731,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-008-tu-duy-dau-nguon.webp,LOCAL_FILE_EXISTS,1,1
+329,AUTH-009,"Thương Hiệu Bước Qua Thao Túng Để Chữa Lành","Nguyễn Khoa Hồng Thành","Nhà xuất bản Trẻ",2024,9786041280861,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-009-thuong-hieu-buoc-qua-thao-tung.webp,LOCAL_FILE_EXISTS,1,1
+330,AUTH-010,"Năm Tính Cách Tiền Bạc (The 5 Money Personalities)","Taylor & Megan Kovar","Nhà xuất bản Trẻ",2023,9786041274846,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-010-nam-tinh-cach-tien-bac.webp,LOCAL_FILE_EXISTS,1,1
+331,AUTH-011,"Nghề Truyền Thông Thị Giác - Truyền Sao Cho Thông?","Phan Trọng Bình","Nhà xuất bản Trẻ",2024,9786041280618,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-011-nghe-truyen-thong-thi-giac.webp,LOCAL_FILE_EXISTS,1,1
+332,AUTH-012,"Tỷ Phú Nhà Bên Làm Gì Sau 5 Giờ Chiều?","Shimamura Yoshihiro","Nhà xuất bản Trẻ",2024,9786041275003,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-012-ty-phu-nha-ben.webp,LOCAL_FILE_EXISTS,1,1
+333,AUTH-013,"Cổ Tích Thế Giới Hay Nhất: Cô Bé Lọ Lem","Hiếu Minh, Cloud Pillow Studio","Nhà xuất bản Kim Đồng",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-013-co-tich-co-be-lo-lem.webp,LOCAL_FILE_EXISTS,1,1
+334,AUTH-014,"Cổ Tích Thế Giới Hay Nhất: Bà Chúa Tuyết","Phương Thúy, Cloud Pillow Studio","Nhà xuất bản Kim Đồng",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-014-co-tich-ba-chua-tuyet.webp,LOCAL_FILE_EXISTS,1,1
+335,AUTH-015,"Cổ Tích Thế Giới Hay Nhất: Bộ Quần Áo Mới Của Hoàng Đế","Hiếu Minh, Cloud Pillow Studio","Nhà xuất bản Kim Đồng",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-015-co-tich-bo-quan-ao-moi-cua-hoang-de.webp,LOCAL_FILE_EXISTS,1,1
+336,AUTH-016,"Cổ Tích Thế Giới Hay Nhất: Chó Sói Và Bảy Chú Dê Con","Hiếu Minh, Cloud Pillow Studio","Nhà xuất bản Kim Đồng",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-016-co-tich-cho-soi-va-bay-chu-de-con.webp,LOCAL_FILE_EXISTS,1,1
+337,AUTH-017,"Bà Ngoại Trên Cây Táo (Die Omama im Apfelbaum)","Mira Lobe, Susi Weigel","Nhà xuất bản Kim Đồng",2023,9786042341219,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-017-ba-ngoai-tren-cay-tao.webp,LOCAL_FILE_EXISTS,1,1
+338,AUTH-018,"Khởi Đầu Nhỏ - Hành Trình Lớn: Hạt Giống Bay Bồng Bềnh","Mary Auld, Dawn Cooper","Nhà xuất bản Kim Đồng",2023,9786042420488,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-018-hat-giong-bay-bong-benh.webp,LOCAL_FILE_EXISTS,1,1
+339,AUTH-019,"90% Trẻ Thông Minh Nhờ Cách Trò Chuyện Đúng Đắn Của Cha Mẹ","Urako Kanamori","Nhà xuất bản Kim Đồng",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-019-90-phan-tram-tre-thong-minh.webp,LOCAL_FILE_EXISTS,1,1
+340,AUTH-020,"Hành Trình Khám Phá: Mây","Thanh Hà, Phạm Cương","Nhà xuất bản Trẻ",2024,9786041281660,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-020-hanh-trinh-kham-pha-may.webp,LOCAL_FILE_EXISTS,1,1
+341,AUTH-021,"Em Bước Vào Thế Giới Khoa Học: Cá Voi Và Cá Heo Có Thông Minh Hơn Con Người Không?","Eliza Jeffery, Lays Bittencourt","Nhà xuất bản Trẻ",2024,9786041282087,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-021-ca-voi-va-ca-heo-co-thong-minh-khong.webp,LOCAL_FILE_EXISTS,1,1
+342,AUTH-022,"Em Bước Vào Thế Giới Khoa Học: Rắn Có Biết Trước Động Đất Không?","Eliza Jeffery, Denis Alonso","Nhà xuất bản Trẻ",2024,9786041282124,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-022-ran-co-biet-truoc-dong-dat-khong.webp,LOCAL_FILE_EXISTS,1,1
+343,AUTH-023,"Thủ Thỉ Cùng Con: Tình Yêu To Lớn","Emma Dodd","Nhà xuất bản Kim Đồng",2023,9786042262200,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-023-thu-thi-cung-con-tinh-yeu-to-lon.webp,LOCAL_FILE_EXISTS,1,1
+344,AUTH-024,"500 Câu Hỏi Tại Sao Thế Nào: Động Vật 1","Sophie de Mullenheim, Amélie Falière","Nhà xuất bản Trẻ",2024,9786041280359,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-024-500-cau-hoi-tai-sao-the-nao-dong-vat-1.webp,LOCAL_FILE_EXISTS,1,1
+345,AUTH-025,"Tôi Đã Trở Thành Nhà Văn Như Thế Nào","Phùng Quán","Nhà xuất bản Kim Đồng",2023,9786042421706,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-025-toi-da-tro-thanh-nha-van-nhu-the-nao.webp,LOCAL_FILE_EXISTS,1,1
+346,AUTH-026,"Biệt Đội Chó Bay","Huỳnh Long, Mai Chi","Nhà xuất bản Kim Đồng",2023,9786042422666,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-026-biet-doi-cho-bay.webp,LOCAL_FILE_EXISTS,1,1
+347,AUTH-027,"Nguyễn Thái Học","Lê Minh Quốc","Nhà xuất bản Kim Đồng",2023,9786042421553,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-027-nguyen-thai-hoc.webp,LOCAL_FILE_EXISTS,1,1
+348,AUTH-028,"Cây Bàng Vuông Kể Chuyện","Phạm Duy Nghĩa","Nhà xuất bản Kim Đồng",2023,9786042420174,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-028-cay-bang-vuong-ke-chuyen.webp,LOCAL_FILE_EXISTS,1,1
+349,AUTH-029,"Cỏ Lưu Lạc","Bùi Tiểu Quyên","Nhà xuất bản Kim Đồng",2023,9786042421928,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-029-co-luu-lac.webp,LOCAL_FILE_EXISTS,1,1
+350,AUTH-030,"Hà Nội Băm Sáu Phố Phường","Thạch Lam","Nhà xuất bản Kim Đồng",2023,9786042138093,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-030-ha-noi-bam-sau-pho-phuong.webp,LOCAL_FILE_EXISTS,1,1
+351,AUTH-031,"Mạng Máy Tính (Tập 1)","Tống Văn On","Nhà xuất bản Thống Kê",2005,,MISSING_UNVERIFIED,/assets/book-covers/auth-031-mang-may-tinh-tap-1.webp,LOCAL_FILE_EXISTS,1,1
+352,AUTH-032,"Sổ Tay HTML & JavaScript","Nguyễn Trường Sinh","Nhà xuất bản Lao Động - Xã Hội",2008,,MISSING_UNVERIFIED,/assets/book-covers/auth-032-so-tay-html-javascript.webp,LOCAL_FILE_EXISTS,1,1
+353,AUTH-033,"Tin Học Văn Phòng - Công Thức Và Hàm Excel",VN-Guide,"Nhà xuất bản Thanh Hóa",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-033-cong-thuc-va-ham-excel.webp,LOCAL_FILE_EXISTS,1,1
+354,AUTH-034,"Cấu Trúc Dữ Liệu Và Thuật Toán (Tập 2: Cài Đặt Trên C/C++)","Trần Thông Quế","Nhà xuất bản Thông tin và Truyền thông",2020,,MISSING_UNVERIFIED,/assets/book-covers/auth-034-cau-truc-du-lieu-thuat-toan-tap-2.webp,LOCAL_FILE_EXISTS,1,1
+355,AUTH-035,"Lập Trình Python Hỗ Trợ Học Sinh THPT Giải Bài Tập Tin Học","Trần Thông Quế","Nhà xuất bản Thông tin và Truyền thông",2021,,MISSING_UNVERIFIED,/assets/book-covers/auth-035-lap-trinh-python-thpt.webp,LOCAL_FILE_EXISTS,1,1
+356,AUTH-036,"Tớ Học Lập Trình - Làm Quen Với Lập Trình Scratch","Rosie Dickins, Louie Stowell, Jonathan Melmoth","Nhà xuất bản Thế Giới",2022,,MISSING_UNVERIFIED,/assets/book-covers/auth-036-to-hoc-lap-trinh-scratch.webp,LOCAL_FILE_EXISTS,1,1
+357,AUTH-037,"Tuyệt Chiêu Kiếm Tiền Bằng AI","Ngô Chấn Thái, Từ Tiệp","Nhà xuất bản Công Thương",2024,,MISSING_UNVERIFIED,/assets/book-covers/auth-037-tuyet-chieu-kiem-tien-bang-ai.webp,LOCAL_FILE_EXISTS,1,1
+358,AUTH-038,"Chinh Phục Trình Diễn Bằng PowerPoint","TS. Tống Xuân Tám, CN. Trần Hoàng Đương","Nhà xuất bản Xây dựng",2021,9786048229177,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-038-chinh-phuc-trinh-dien-powerpoint.webp,LOCAL_FILE_EXISTS,1,1
+359,AUTH-039,"Tin Học Ứng Dụng 2 SAP2000 - Hướng Dẫn Các Dạng Kết Cấu Thông Dụng","ThS. Nguyễn Vy Thanh","Nhà xuất bản Xây dựng",2022,9786048269630,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-039-tin-hoc-ung-dung-sap2000.webp,LOCAL_FILE_EXISTS,1,1
+360,AUTH-040,"Giáo Trình Lập Trình Java Căn Bản","Phạm Văn Trung","Nhà xuất bản Xây dựng",2022,9786048271916,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-040-giao-trinh-lap-trinh-java-can-ban.webp,LOCAL_FILE_EXISTS,1,1
+361,AUTH-041,"Học Là Chuyện Nhỏ: Bí Kíp Rèn Luyện Tính Tự Giác","Mengbao Culture","Nhà xuất bản Kim Đồng",2023,9786042423762,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-041-bi-kip-ren-luyen-tinh-tu-giac.webp,LOCAL_FILE_EXISTS,1,1
+362,AUTH-042,"Kĩ Năng Cho Học Sinh Tiểu Học: Rèn Cách Quản Lí Thời Gian","Liu Yong","Nhà xuất bản Kim Đồng",2023,9786042423083,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-042-ren-cach-quan-li-thoi-gian.webp,LOCAL_FILE_EXISTS,1,1
+363,AUTH-043,"Kĩ Năng Cho Học Sinh Tiểu Học: Rèn Năng Lực Ngôn Từ","Liu Yong","Nhà xuất bản Kim Đồng",2023,9786042423090,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-043-ren-nang-luc-ngon-tu.webp,LOCAL_FILE_EXISTS,1,1
+364,AUTH-044,"Khéo Khôn Với Tiền - Tránh Những Ưu Phiền (Tập 2)","Lê Thị Thuý Sen, Thăng Fly","Nhà xuất bản Kim Đồng",2024,9786042424363,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-044-kheo-khon-voi-tien-tap-2.webp,LOCAL_FILE_EXISTS,1,1
+365,AUTH-045,"MBTI 16 Nhóm Tính Cách: Hiểu Tính Cách Để Học Giỏi Hơn (Tập 4)","Jo Su Yeon, So Yoon","Nhà xuất bản Kim Đồng",2023,9786042421799,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-045-mbti-hieu-tinh-cach-de-hoc-gioi-hon.webp,LOCAL_FILE_EXISTS,1,1
+366,AUTH-046,"Học Là Chuyện Nhỏ: Bí Kíp Vượt Qua Áp Lực Học Hành","Mengbao Culture","Nhà xuất bản Kim Đồng",2023,9786042423755,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-046-bi-kip-vuot-qua-ap-luc-hoc-hanh.webp,LOCAL_FILE_EXISTS,1,1
+367,AUTH-047,"Cẩm Nang Sinh Hoạt Bằng Tranh Cho Bé (Tập 2: Kĩ Năng Khi Ăn Uống)","Masaaki Yatagai, Akira Murakoshi","Nhà xuất bản Kim Đồng",2023,9786042107846,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-047-cam-nang-sinh-hoat-ki-nang-khi-an-uong.webp,LOCAL_FILE_EXISTS,1,1
+368,AUTH-048,"Comic Kĩ Năng Sống: Thoát Hiểm An Toàn","Hoài Thu, Hiếu Minh, Nguyễn Quang Toàn","Nhà xuất bản Kim Đồng",2023,9786042263450,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-048-comic-thoat-hiem-an-toan.webp,LOCAL_FILE_EXISTS,1,1
+369,AUTH-049,"Kĩ Năng Cho Học Sinh Tiểu Học: Rèn Khả Năng Vượt Qua Nghịch Cảnh","Liu Yong","Nhà xuất bản Kim Đồng",2023,,MISSING_UNVERIFIED,/assets/book-covers/auth-049-ren-kha-nang-vuot-qua-nghich-canh.webp,LOCAL_FILE_EXISTS,1,1
+370,AUTH-050,"MBTI 16 Nhóm Tính Cách: Hiểu Tính Cách Để Chọn Đúng Nghề Nghiệp (Tập 5)","Jo Su Yeon, So Yoon","Nhà xuất bản Kim Đồng",2023,9786042421805,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-050-mbti-hieu-tinh-cach-de-chon-dung-nghe.webp,LOCAL_FILE_EXISTS,1,1
+371,AUTH-051,"Hiểu Về Tài Chính Vững Bước Tương Lai: Tiết Kiệm Cho Tương Lai","Cecilia Minden","Nhà xuất bản Kim Đồng",2024,9786042369305,CHECKSUM_VALID_EDITION_NOT_PROVEN,/assets/book-covers/auth-051-hieu-ve-tai-chinh-tiet-kiem-cho-tuong-lai.webp,LOCAL_FILE_EXISTS,1,1

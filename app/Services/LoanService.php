@@ -18,7 +18,7 @@ final class LoanService
     {
     }
 
-    public function checkout(int $readerId, array $copyIds, int $issuedBy, string $borrowedAt, string $dueAt, string $note = ''): string
+    public function checkout(int $readerId, array $copyIds, int $issuedBy, string $borrowedAt, string $dueAt, string $note = '', ?string $requestKey = null): string
     {
         if (!$this->validDate($borrowedAt) || !$this->validDate($dueAt) ||
             $borrowedAt > date('Y-m-d') || $dueAt < $borrowedAt) {
@@ -28,22 +28,31 @@ final class LoanService
             array_map('intval', $copyIds),
             static fn(int $copyId): bool => $copyId > 0
         )));
-        $settings = new SystemSettingRepository($this->db);
-        $maxCopies = $settings->integer('max_books_per_reader', 5, 1, 50);
-        $loanDays = $settings->integer('default_loan_days', 14, 1, 90);
-        if (!$copyIds || count($copyIds) > $maxCopies) {
-            throw new RuntimeException("Mỗi phiếu cần từ 1 đến {$maxCopies} bản sao sách.");
-        }
-        if ((int) ((strtotime($dueAt) - strtotime($borrowedAt)) / 86400) > $loanDays) {
-            throw new RuntimeException("Thời hạn mượn không được vượt quá {$loanDays} ngày.");
-        }
-        $dailyFine = $settings->decimal('fine_per_overdue_day', $this->dailyFine, 0, 10000000);
         sort($copyIds, SORT_NUMERIC);
 
         $this->db->beginTransaction();
         try {
+            $request = new MutationRequest($this->db, $issuedBy, 'checkout', $requestKey);
+            $previous = $request->claim([$readerId,$copyIds,$borrowedAt,$dueAt,$note]);
+            if ($previous !== null) {
+                $this->db->commit();
+                return $previous['loan_code'];
+            }
+            $policy = (new SystemSettingRepository($this->db))->currentPolicy();
+            $maxCopies = (int) $policy['max_books_per_reader'];
+            $loanDays = (int) $policy['default_loan_days'];
+            if (!$copyIds || count($copyIds) > $maxCopies) {
+                throw new RuntimeException("Mỗi phiếu cần từ 1 đến {$maxCopies} bản sao sách.");
+            }
+            if ((int) ((strtotime($dueAt) - strtotime($borrowedAt)) / 86400) > $loanDays) {
+                throw new RuntimeException("Thời hạn mượn không được vượt quá {$loanDays} ngày.");
+            }
+            $dailyFine = (float) $policy['fine_per_overdue_day'];
             $reader = (new ReaderRepository($this->db))->findForUpdate($readerId);
-            if (!$reader || ($reader['expires_on'] && $reader['expires_on'] < date('Y-m-d'))) {
+            if (!$reader || !(bool) $reader['is_active']) {
+                throw new RuntimeException('Thẻ độc giả chưa được kích hoạt hoặc đã bị khóa.');
+            }
+            if ($reader['expires_on'] && $reader['expires_on'] < date('Y-m-d')) {
                 throw new RuntimeException('Thẻ độc giả đã hết hạn.');
             }
 
@@ -52,6 +61,13 @@ final class LoanService
                 throw new RuntimeException("Độc giả đã đạt giới hạn {$maxCopies} bản sách đang mượn.");
             }
 
+            // Lock parent books in ascending order before joining/locking copies.
+            $q = $this->db->prepare('SELECT DISTINCT book_id FROM book_copies WHERE id IN ('
+                . implode(',', array_fill(0,count($copyIds),'?')) . ') ORDER BY book_id');
+            $q->execute($copyIds);
+            foreach ($q->fetchAll(PDO::FETCH_COLUMN) as $bookId) {
+                (new BookRepository($this->db))->findForUpdate((int) $bookId);
+            }
             $copies = [];
             $booksInRequest = [];
             foreach ($copyIds as $copyId) {
@@ -71,8 +87,11 @@ final class LoanService
                 if ($copy['status'] === 'reserved' && !$reservedForReader) {
                     throw new RuntimeException('Bản sao này đang được giữ cho độc giả đã đặt trước.');
                 }
+                if ($copy['status'] === 'pending_audit') {
+                    throw new RuntimeException("Bản sao {$copy['copy_code']} đang ở trạng thái chờ kiểm kê (pending_audit), chưa thể đưa vào lưu hành.");
+                }
                 if (!in_array($copy['status'], ['available', 'reserved'], true)) {
-                    throw new RuntimeException('Một hoặc nhiều bản sao không còn khả dụng.');
+                    throw new RuntimeException("Bản sao {$copy['copy_code']} không ở trạng thái sẵn sàng cho mượn (trạng thái: {$copy['status']}).");
                 }
                 if ($readyReservation) {
                     if ($readyReservation['book_copy_id'] !== null && !$reservedForReader) {
@@ -103,6 +122,7 @@ final class LoanService
             }
             (new ActivityRepository($this->db))->log($issuedBy, 'loan_created', 'loan', $loanId, "Lập phiếu {$code}");
             $this->notifyReader($readerId, 'Phiếu mượn mới', "Phiếu {$code} đã được lập. Hạn trả: " . date('d/m/Y', strtotime($dueAt)) . '.', 'loan', $loanId, 'loan-created:' . $loanId);
+            $request->complete(['loan_code' => $code]);
             $this->db->commit();
             return $code;
         } catch (\Throwable $exception) {
@@ -113,12 +133,52 @@ final class LoanService
         }
     }
 
-    public function returnBook(int $loanItemId, int $userId, string $condition = 'good'): void
+    public function returnBook(int $loanItemId,int $userId,string $condition='good'): void
+    {
+        $this->returnItems([$loanItemId],$userId,$condition);
+    }
+    public function returnAll(int $loanId,int $userId,string $condition='good'): void
+    {
+        $s=$this->db->prepare('SELECT id FROM loan_items WHERE loan_id=? AND returned_at IS NULL ORDER BY id');
+        $s->execute([$loanId]);$ids=array_map('intval',$s->fetchAll(\PDO::FETCH_COLUMN));
+        if (!$ids) throw new RuntimeException('Phiếu không còn bản sách chưa trả.');
+        $this->returnItems($ids,$userId,$condition);
+    }
+    private function returnItems(array $ids,int $userId,string $condition): void
+    {
+        $this->db->beginTransaction();
+        try {
+            sort($ids,SORT_NUMERIC);
+            $this->lockItemContext($ids);
+            foreach ($ids as $id) $this->returnItem($id,$userId,$condition);
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    private function lockItemContext(array $ids): array
+    {
+        $q=$this->db->prepare('SELECT li.id,l.reader_id,cp.book_id FROM loan_items li
+            JOIN loans l ON l.id=li.loan_id JOIN book_copies cp ON cp.id=li.book_copy_id
+            WHERE li.id IN ('.implode(',',array_fill(0,count($ids),'?')).')');
+        $q->execute($ids);
+        $rows=$q->fetchAll(PDO::FETCH_UNIQUE | PDO::FETCH_ASSOC);
+        $readers=array_unique(array_column($rows,'reader_id'));
+        $books=array_unique(array_column($rows,'book_id'));
+        sort($readers,SORT_NUMERIC);sort($books,SORT_NUMERIC);
+        $lock=$this->db->prepare('SELECT id FROM readers WHERE id=? FOR UPDATE');
+        foreach ($readers as $id) $lock->execute([$id]);
+        foreach ($books as $id) (new BookRepository($this->db))->findForUpdate((int)$id);
+        return $rows;
+    }
+
+    private function returnItem(int $loanItemId, int $userId, string $condition = 'good'): void
     {
         if (!in_array($condition, ['good', 'worn', 'damaged', 'lost'], true)) {
             throw new RuntimeException('Tình trạng bản sao khi trả không hợp lệ.');
         }
-        $this->db->beginTransaction();
         try {
             $loans = new LoanRepository($this->db);
             $item = $loans->findItemForUpdate($loanItemId);
@@ -154,11 +214,7 @@ final class LoanService
                 (int) $item['loan_id'],
                 "Nhận trả bản {$item['copy_code']} của phiếu {$item['loan_code']}"
             );
-            $this->db->commit();
         } catch (\Throwable $exception) {
-            if ($this->db->inTransaction()) {
-                $this->db->rollBack();
-            }
             throw $exception;
         }
     }
@@ -167,14 +223,14 @@ final class LoanService
     {
         $this->db->beginTransaction();
         try {
+            $reader = (new ReaderRepository($this->db))->findForUpdate($readerId);
+            if (!$reader || ($reader['expires_on'] && $reader['expires_on'] < date('Y-m-d'))) {
+                throw new RuntimeException('Thẻ độc giả không hợp lệ hoặc đã hết hạn.');
+            }
             $books = new BookRepository($this->db);
             $book = $books->findForUpdate($bookId);
             if (!$book) {
                 throw new RuntimeException('Không tìm thấy sách.');
-            }
-            $reader = (new ReaderRepository($this->db))->findForUpdate($readerId);
-            if (!$reader || ($reader['expires_on'] && $reader['expires_on'] < date('Y-m-d'))) {
-                throw new RuntimeException('Thẻ độc giả không hợp lệ hoặc đã hết hạn.');
             }
             $loans = new LoanRepository($this->db);
             if ($loans->hasActiveBookForReader($readerId, $bookId) ||
@@ -270,14 +326,26 @@ final class LoanService
         }
     }
 
-    public function renew(int $loanItemId, int $userId, ?int $readerId = null): string
+    public function renew(int $loanItemId, int $userId, ?int $readerId = null, ?string $requestKey = null): string
     {
         $this->db->beginTransaction();
         try {
-            $settings = new SystemSettingRepository($this->db);
-            $maximum = $settings->integer('max_renewals', 2, 0, 10);
-            $days = $settings->integer('renewal_days', 14, 1, 90);
-            $policyVersion = $settings->currentPolicyVersion();
+            $request = new MutationRequest($this->db,$userId,'renew',$requestKey);
+            $previous = $request->claim([$loanItemId,$readerId]);
+            if ($previous !== null) {
+                $this->db->commit();
+                return $previous['due_date'];
+            }
+            $context = $this->lockItemContext([$loanItemId]);
+            $owner = $context[$loanItemId]['reader_id'] ?? 0;
+            $reader = (new ReaderRepository($this->db))->findForUpdate((int) $owner);
+            if (!$reader || ($reader['expires_on'] && $reader['expires_on'] < date('Y-m-d'))) {
+                throw new RuntimeException('Thẻ độc giả không hoạt động hoặc đã hết hạn.');
+            }
+            $policy = (new SystemSettingRepository($this->db))->currentPolicy();
+            $maximum = (int) $policy['max_renewals'];
+            $days = (int) $policy['renewal_days'];
+            $policyVersion = (int) $policy['id'];
             $loans = new LoanRepository($this->db);
             $item = $loans->findItemForUpdate($loanItemId);
             if (!$item || $item['returned_at'] !== null ||
@@ -316,6 +384,7 @@ final class LoanService
                 $loanItemId,
                 'loan-renewed:' . $loanItemId . ':' . $renewalNumber
             );
+            $request->complete(['due_date' => $newDueDate]);
             $this->db->commit();
             return $newDueDate;
         } catch (\Throwable $exception) {
@@ -331,6 +400,11 @@ final class LoanService
         $this->db->beginTransaction();
         try {
             $loans = new LoanRepository($this->db);
+            $initial = $loans->findReservation($reservationId);
+            if (!$initial || (int) $initial['reader_id'] !== $readerId) {
+                throw new RuntimeException('Không thể hủy yêu cầu đặt trước này.');
+            }
+            (new BookRepository($this->db))->findForUpdate((int) $initial['book_id']);
             $reservation = $loans->findReservationForUpdate($reservationId);
             if (!$reservation || (int) $reservation['reader_id'] !== $readerId ||
                 !in_array($reservation['status'], ['pending', 'ready'], true)) {
@@ -394,12 +468,20 @@ final class LoanService
         try {
             $expired = $this->db->query(
                 'SELECT id, reader_id, book_id, book_copy_id FROM reservations
-                 WHERE status = "ready" AND expires_at < NOW() ORDER BY expires_at, id FOR UPDATE'
+                 WHERE status = "ready" AND expires_at < NOW() ORDER BY book_id, id'
             )->fetchAll();
             $statement = $this->db->prepare(
                 'UPDATE reservations SET status = "cancelled" WHERE id = :id AND status = "ready"'
             );
-            foreach ($expired as $reservation) {
+            $processed = 0;
+            foreach ($expired as $candidate) {
+                (new BookRepository($this->db))->findForUpdate((int) $candidate['book_id']);
+                $current=$this->db->prepare('SELECT id,reader_id,book_id,book_copy_id FROM reservations
+                    WHERE id=? AND status="ready" AND expires_at < NOW() FOR UPDATE');
+                $current->execute([$candidate['id']]);
+                $reservation=$current->fetch();
+                if (!$reservation) continue;
+                $processed++;
                 $statement->execute(['id' => $reservation['id']]);
                 if (!empty($reservation['book_copy_id'])) {
                     $this->releaseReservedCopy((int) $reservation['book_copy_id']);
@@ -415,7 +497,7 @@ final class LoanService
                 );
             }
             $this->db->commit();
-            return count($expired);
+            return $processed;
         } catch (\Throwable $exception) {
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();

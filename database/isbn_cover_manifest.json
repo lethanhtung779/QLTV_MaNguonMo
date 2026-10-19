@@ -1,0 +1,122 @@
+[
+  {
+    "book_code": "B001",
+    "title": "Giết con chim nhại",
+    "author": "Harper Lee",
+    "isbn": "9780060935467",
+    "cover_url": "/assets/book-covers/b001-to-kill-a-mockingbird.webp",
+    "source_url": "https://openlibrary.org/books/OL37027463M",
+    "source_title": "To Kill a Mockingbird",
+    "source_authors": [
+      "Harper Lee"
+    ],
+    "source_publisher": "HarperPerennial ModernClassics",
+    "source_date": "2016",
+    "verification": "exact stored ISBN + same work/author; Vietnamese edition not verified",
+    "cover_sha256": "974912049a4976ad710db1e1d2a9d1d674ea97166a7b51fa15eac1c065fe9cf5",
+    "cover_bytes": 35196,
+    "http": 200,
+    "mime": "image/webp",
+    "local_rehosting": true
+  },
+  {
+    "book_code": "B002",
+    "title": "Sapiens: Lược sử loài người",
+    "author": "Yuval Noah Harari",
+    "isbn": "9780062316097",
+    "cover_url": "/assets/book-covers/b002-sapiens-luoc-su-loai-nguoi.webp",
+    "source_url": "https://openlibrary.org/books/OL28440487M",
+    "source_title": "Sapiens A brief Story of Human Kind",
+    "source_authors": [
+      "Yuval Noah Harari"
+    ],
+    "source_publisher": "Omega+ / NXB Tri Thức",
+    "source_date": "2011",
+    "verification": "Official Vietnamese edition cover provided by user ZIP Paper_Haven_Bia_Sach_Doi_Soat.zip",
+    "cover_sha256": "11536b8ebb3de68beb2b4d8b14c1959ee76bc3d20fc69a2d0d443fac52b03da1",
+    "cover_bytes": 34214,
+    "http": 200,
+    "mime": "image/webp",
+    "local_rehosting": true
+  },
+  {
+    "book_code": "B003",
+    "title": "Trí tuệ xúc cảm",
+    "author": "Daniel Goleman",
+    "isbn": "9780553383713",
+    "cover_url": "/assets/book-covers/b003-emotional-intelligence.webp",
+    "source_url": "https://openlibrary.org/books/OL7826621M",
+    "source_title": "Emotional Intelligence",
+    "source_authors": [
+      "Daniel Goleman"
+    ],
+    "source_publisher": "Bantam Books",
+    "source_date": "September 27, 2005",
+    "verification": "exact stored ISBN + same work/author; Vietnamese edition not verified",
+    "cover_sha256": "4891d2214c515641000e844757e07a4f74af09cb9921c03576423d9827e3b33c",
+    "cover_bytes": 26422,
+    "http": 200,
+    "mime": "image/webp",
+    "local_rehosting": true
+  },
+  {
+    "book_code": "B004",
+    "title": "Nhà giả kim",
+    "author": "Paulo Coelho",
+    "isbn": "9780061122415",
+    "cover_url": "/assets/book-covers/b004-the-alchemist.webp",
+    "source_url": "https://openlibrary.org/books/OL7288233M",
+    "source_title": "The Alchemist",
+    "source_authors": [
+      "Paulo Coelho"
+    ],
+    "source_publisher": "HarperSanFrancisco",
+    "source_date": "2006",
+    "verification": "exact stored ISBN + same work/author; Vietnamese edition not verified",
+    "cover_sha256": "3dd9b325d5655641daa20c56995f1150e72096284bd3121fb9c24c8ecad70d3b",
+    "cover_bytes": 32464,
+    "http": 200,
+    "mime": "image/webp",
+    "local_rehosting": true
+  },
+  {
+    "book_code": "B005",
+    "title": "Harry Potter và Hòn đá phù thủy",
+    "author": "J.K. Rowling",
+    "isbn": "9780590353427",
+    "cover_url": "/assets/book-covers/b005-harry-potter.webp",
+    "source_url": "https://openlibrary.org/books/OL61088892M",
+    "source_title": "Harry Potter and the Sorcerer's Stone",
+    "source_authors": [
+      "J. K. Rowling"
+    ],
+    "source_publisher": "Scholastic Inc.",
+    "source_date": "1999",
+    "verification": "exact stored ISBN + same work/author; Vietnamese edition not verified",
+    "cover_sha256": "c6f984cd42e45cf8f981ac01d504e9f4daaf6b80b002964692348662bb3ea68c",
+    "cover_bytes": 48622,
+    "http": 200,
+    "mime": "image/webp",
+    "local_rehosting": true
+  },
+  {
+    "book_code": "B008",
+    "title": "HTML & CSS – Thiết kế Web",
+    "author": "Jon Duckett",
+    "isbn": "9781118008188",
+    "cover_url": "/assets/book-covers/b008-html-css.webp",
+    "source_url": "https://openlibrary.org/books/OL25431044M",
+    "source_title": "HTML and CSS",
+    "source_authors": [
+      "Jon Duckett"
+    ],
+    "source_publisher": "Wiley; Wiley [distributor]",
+    "source_date": "2011-11-8",
+    "verification": "exact stored ISBN + same work/author; Vietnamese edition not verified",
+    "cover_sha256": "a4170dcbdf7c45c43e0153373a50ce410a565a69015fafb4e43c3a59ebc78e66",
+    "cover_bytes": 8996,
+    "http": 200,
+    "mime": "image/webp",
+    "local_rehosting": true
+  }
+]

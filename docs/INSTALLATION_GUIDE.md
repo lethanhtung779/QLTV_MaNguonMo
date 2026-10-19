@@ -1,62 +1,34 @@
-# Cài đặt Laragon Windows
+# Cài đặt và triển khai
 
-PHP 8.2+ với PDO MySQL/mbstring, MySQL 8.x, Apache rewrite hoặc PHP built-in server. Đã kiểm chứng PHP 8.3.33/MySQL 8.4.3. Source thật là thư mục có public/index.php, app/ và database/.
+1. Clone nhánh được phê duyệt; sprint chưa push. Workspace hiện tại chọn QLTV_MaNguonMo-github-stage.
+2. Terminal Laragon, bật MySQL; kiểm tra php -v, php -m, composer --version.
+3. composer install --no-interaction --prefer-dist. PDF dependency khai báo trong composer.lock.
+4. Copy .env.example → .env. Đặt DB_NAME riêng, kết nối MySQL, Admin email/mật khẩu mạnh. Không commit .env.
+5. php database/setup.php rồi php database/seed.php. Migrations 001–008 theo thứ tự, không reset.
+6. Demo local: APP_ENV=local, SEED_DEMO_DATA=true, php database/seed_demo.php. Mật khẩu sinh riêng vào .env. Admin tạo Thủ thư qua giao diện; form thẻ mới có email/mật khẩu Độc giả.
+7. php -S 127.0.0.1:8010 -t public public/index.php. Mở http://127.0.0.1:8010/login; assets tại /assets/ phải trả 200.
+8. Apache: DocumentRoot public/, AllowOverride All, bật rewrite; không trỏ vào root source.
+9. upload_max_filesize ≥5M, post_max_size ≥8M; GD/fileinfo/DOM/mbstring/PDO MySQL hoạt động. Web server cần quyền ghi storage/cache, logs, uploads; không cho thực thi upload.
+10. Public deployment: HTTPS, APP_ENV=production, APP_DEBUG=false, tắt demo seed. Session HttpOnly/Lax, Secure khi HTTPS. Reverse proxy cần cấu hình HTTPS đúng ở web server.
+11. Lập lịch php database/maintenance.php mỗi ngày/giờ. Sprint không tự cấu hình Windows Task Scheduler.
+12. Chạy `php database/backup.php`; script tạo SQL consistent snapshot cùng file `.sha256` và `.json` metadata trong `storage/backups`. Kiểm tra restore bằng `php tests/backup_restore.php <đường-dẫn-sql>`; script luôn tạo schema test mới. Sao lưu cả upload sang vị trí riêng có kiểm soát. SQL có hash mật khẩu và dữ liệu độc giả, không công khai.
 
-## Cài máy mới
+## Nâng cấp
 
-```powershell
-Copy-Item .env.example .env
-```
+Sao lưu trước; setup thêm bảng quyền và cột tình trạng trả. Bản trả lịch sử trước migration 008 giữ return_condition=NULL, không suy diễn từ copy hiện tại. Không reset. Seed Admin không đổi mật khẩu tài khoản đã tồn tại.
 
-Sửa .env riêng: DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASSWORD; APP_URL/APP_BASE_PATH theo vị trí; SESSION_TIMEOUT mặc định 1800 giây; SEED_ADMIN_EMAIL/PASSWORD dùng mật khẩu mạnh riêng. Không đưa .env lên web/Git/báo cáo.
+## Cài mới được nghiệm thu
 
-```powershell
-php database/setup.php
-php database/seed.php
-php -S 127.0.0.1:8000 -t public public/index.php
-```
+Clone GitHub nhánh minh ở commit e78f09a vào thư mục riêng. Vì chưa push sprint, áp dụng source local đang nghiệm thu lên clone; không copy vendor/storage/.env cũ. Composer từ lock, .env riêng, DB paper_page_test_clone_..., migration/Admin seed/demo seed, server 8012. CRUD/mượn/trả/roles/assets được test trên bản này. Remote hiện tại chưa có thay đổi sprint.
 
-Setup áp dụng migration 001–006 và tạo 9 sách/63 copy/metadata ngay lần đầu; chạy lại không reset dữ liệu. Seed admin tạo/cập nhật role, không reset password tài khoản đã tồn tại. Với database hiện tại đã setup/seed, chỉ cần bật MySQL và chạy web server. PHP không nằm PATH: dùng Terminal Laragon hoặc gọi php.exe trong bin/php phiên bản đã chọn.
+## QA riêng
 
-Apache DocumentRoot trỏ public/, bật mod_rewrite/AllowOverride. APP_BASE_PATH dùng khi chạy dưới đường dẫn con. Runtime cần quyền ghi storage/logs và storage/cache/login_attempts. Production: APP_ENV=production, APP_DEBUG=false, HTTPS và tài khoản DB giới hạn quyền.
+prepare_test_database.php tạo snapshot DB paper_page_test_...; đặt DB_NAME theo storage/test_database_name.txt. Test ghi dữ liệu từ chối tên khác. Browser tests cần Playwright riêng:
 
-## Demo
+~~~powershell
+npm install --prefix storage/browser-qa playwright
+$env:QA_BASE_URL="http://127.0.0.1:8011"
+$env:QA_BROWSER="C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+~~~
 
-Chỉ cho database local mới cần demo: đặt SEED_DEMO_DATA=true rồi php database/seed_demo.php. Fixture thêm 21 sách, tài khoản staff/reader và phiếu mẫu; không reset. Email/mật khẩu lấy riêng từ SEED_DEMO_* trong .env; không in/chia sẻ password công khai. Database hiện tại đã có demo, không cần chạy lại.
-
-## Kiểm thử an toàn
-
-```powershell
-php tests/lint.php
-php tests/run.php
-php tests/security.php
-node --check public/assets/js/app.js
-php tests/prepare_test_database.php
-$env:DB_NAME = (Get-Content storage/test_database_name.txt -Raw).Trim()
-php tests/mysql_completion.php
-php tests/mysql_phase3.php
-php tests/mysql_phase4.php
-php tests/mysql_concurrency.php
-php tests/setup_fresh.php
-php tests/prepare_http_fixtures.php
-php tests/mysql_reminders.php
-```
-
-Clone tạo database test tên mới, giữ nguyên database nguồn. Guard từ chối các test ghi nếu DB_NAME không phải paper_page_test_... . Test completion/HTTP giữ fixture trong DB test để đối chiếu; không dọn bằng lệnh reset database chính.
-
-Browser: npm.cmd install --prefix storage/browser-qa playwright --no-audit --no-fund. Khởi chạy PHP server 127.0.0.1:8011 với DB_NAME test và SESSION_NAME=paper_page_qa; ở terminal khác chạy node tests/browser_completion.cjs. Script dùng Edge Windows tại C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe; điều chỉnh đường dẫn nếu máy khác. Khi quay lại app chính: Remove-Item Env:DB_NAME và dừng server QA trước khi mở server demo.
-
-## Backup
-
-Không đặt mật khẩu vào lệnh; -p yêu cầu nhập riêng. Tạo storage/backups (bị ignore), dùng mysqldump của Laragon:
-
-```powershell
-New-Item -ItemType Directory -Force storage/backups
-mysqldump --single-transaction --routines --triggers --hex-blob --set-gtid-purged=OFF -h 127.0.0.1 -u root -p --result-file=storage/backups/library.sql paper_page_library
-```
-
-Dùng --result-file để tránh lỗi encoding do PowerShell redirect. Kiểm tra file và thử restore vào database khác trước khi dùng cho nộp/khôi phục; lượt này chưa chạy restore backup. Không import đè database đang dùng. Khi gửi bài, chuyển bản backup qua kênh riêng sau khi xử lý thông tin cá nhân/hash phù hợp.
-
-## Bảo trì
-
-php database/maintenance.php cập nhật expiry reservation, phí và reminder. Có thể chạy hàng ngày bằng Windows Task Scheduler: Program=php.exe, Arguments=database/maintenance.php, Start in=source root. Thông báo vẫn phát sinh khi reader mở account/notifications; Task Scheduler chưa tự đăng ký trong lượt bàn giao.
+Server phải dùng DB_NAME test, chuẩn bị fixtures theo README. PDF QA cần pip install pymupdf. setup_fresh.php kiểm tra cài mới/idempotency. MariaDB, Linux/Nginx, HTTPS public và tải lớn chưa được nghiệm thu độc lập.

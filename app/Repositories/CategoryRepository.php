@@ -11,13 +11,19 @@ final class CategoryRepository
     {
     }
 
-    public function all(): array
+    public function all(bool $publicOnly = false): array
     {
-        return $this->db->query(
-            'SELECT c.*, COUNT(DISTINCT b.id) AS book_count
-             FROM categories c LEFT JOIN books b ON b.category_id = c.id AND b.is_active = 1
-             GROUP BY c.id ORDER BY c.name'
-        )->fetchAll();
+        $sql = 'SELECT c.*, COUNT(DISTINCT b.id) AS book_count
+             FROM categories c LEFT JOIN books b ON b.category_id = c.id AND b.is_active = 1';
+        if ($publicOnly) {
+            $sql .= ' AND b.is_public = 1';
+        }
+        $sql .= ' GROUP BY c.id';
+        if ($publicOnly) {
+            $sql .= ' HAVING COUNT(DISTINCT b.id) > 0';
+        }
+        $sql .= ' ORDER BY c.name';
+        return $this->db->query($sql)->fetchAll();
     }
 
     public function create(string $name, string $description): void

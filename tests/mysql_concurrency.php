@@ -185,7 +185,7 @@ try {
               AND requested.ENGINE_LOCK_ID = w.REQUESTING_ENGINE_LOCK_ID
              JOIN performance_schema.threads t ON t.THREAD_ID = w.REQUESTING_THREAD_ID
              WHERE requested.OBJECT_SCHEMA = DATABASE()
-               AND requested.OBJECT_NAME = "book_copies"
+               AND requested.OBJECT_NAME IN ("book_copies","books")
                AND t.PROCESSLIST_ID IN (?, ?)'
         );
         while (microtime(true) < $waitDeadline) {
@@ -213,7 +213,7 @@ try {
     }
     $assert(
         $observedWaiters === 2,
-        "Both independent sessions must be observed waiting on the same locked copy ({$waitMonitoring}); observed {$observedWaiters}."
+        "Both independent sessions must be observed waiting on the locked copy or its parent book ({$waitMonitoring}); observed {$observedWaiters}."
     );
 
     $db->commit();

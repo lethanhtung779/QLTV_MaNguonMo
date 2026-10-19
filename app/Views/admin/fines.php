@@ -12,8 +12,8 @@ $totalOutstanding = array_sum(array_map(static fn(array $account): float => (flo
 <div class="dashboard-columns">
   <section class="panel">
     <div class="panel-heading"><div><span class="eyebrow">THU TẠI THƯ VIỆN</span><h2>Ghi nhận thanh toán</h2><p class="muted">Khoản thu sẽ được phân bổ theo phí phát sinh cũ nhất và không vượt dư nợ.</p></div></div>
-    <form class="form-stack" method="post" action="<?= e(url('/admin/fines/payments')) ?>">
-      <?= csrf_field() ?>
+    <?php if (can('fines.collect')): ?><form class="form-stack" method="post" action="<?= e(url('/admin/fines/payments')) ?>">
+      <?= csrf_field() ?><?= mutation_field() ?>
       <label>Độc giả
         <select name="reader_id" required>
           <option value="">Chọn độc giả</option>
@@ -33,7 +33,7 @@ $totalOutstanding = array_sum(array_map(static fn(array $account): float => (flo
         <label>Ghi chú<input type="text" name="note" maxlength="300"></label>
       </div>
       <div class="dialog-actions"><button class="button button-primary">Ghi nhận thanh toán</button></div>
-    </form>
+    </form><?php endif; ?>
   </section>
   <section class="panel">
     <div class="panel-heading"><div><span class="eyebrow">CẦN THEO DÕI</span><h2>Dư nợ độc giả</h2></div></div>
@@ -75,7 +75,7 @@ $totalOutstanding = array_sum(array_map(static fn(array $account): float => (flo
           <td><?= number_format((float) $charge['waived_amount'], 0, ',', '.') ?>đ</td>
           <td><strong><?= number_format((float) $charge['balance'], 0, ',', '.') ?>đ</strong></td>
           <?php if (current_user()['role'] === 'admin'): ?>
-            <td><?php if ((float) $charge['balance'] > 0): ?><form class="inline-filter" method="post" action="<?= e(url('/admin/fines/waive')) ?>" data-confirm="Ghi nhận miễn/giảm khoản phí này?"><?= csrf_field() ?><input type="hidden" name="charge_id" value="<?= (int) $charge['id'] ?>"><input type="number" name="amount" min="0.01" max="<?= e((string) $charge['balance']) ?>" step="0.01" placeholder="Số tiền" required><input type="text" name="reason" maxlength="300" placeholder="Lý do" required><button class="button button-small button-outline">Áp dụng</button></form><?php else: ?>—<?php endif; ?></td>
+            <td><?php if ((float) $charge['balance'] > 0): ?><?php if (can('fines.waive')): ?><form class="inline-filter" method="post" action="<?= e(url('/admin/fines/waive')) ?>" data-confirm="Ghi nhận miễn/giảm khoản phí này?"><?= csrf_field() ?><?= mutation_field() ?><input type="hidden" name="charge_id" value="<?= (int) $charge['id'] ?>"><input type="number" name="amount" min="0.01" max="<?= e((string) $charge['balance']) ?>" step="0.01" placeholder="Số tiền" required><input type="text" name="reason" maxlength="300" placeholder="Lý do" required><button class="button button-small button-outline">Áp dụng</button></form><?php endif; ?><?php else: ?>—<?php endif; ?></td>
           <?php endif; ?>
         </tr>
       <?php endforeach; ?>
@@ -87,7 +87,7 @@ $totalOutstanding = array_sum(array_map(static fn(array $account): float => (flo
   <?php if ($payments): ?>
     <div class="table-scroll"><table><thead><tr><th>Thời điểm</th><th>Độc giả</th><th>Số tiền</th><th>Hình thức</th><th>Tham chiếu</th><th>Người nhận</th></tr></thead><tbody>
       <?php foreach ($payments as $payment): ?>
-        <tr><td><?= e(date('d/m/Y H:i', strtotime($payment['created_at']))) ?></td><td><strong><?= e($payment['full_name']) ?></strong><small><?= e($payment['card_number']) ?></small></td><td><strong><?= number_format((float) $payment['amount'], 0, ',', '.') ?>đ</strong></td><td><?= ['cash' => 'Tiền mặt', 'bank_transfer' => 'Chuyển khoản', 'card' => 'Thẻ', 'other' => 'Khác'][$payment['method']] ?? e($payment['method']) ?></td><td><?= e($payment['reference_code'] ?: '—') ?></td><td><?= e($payment['receiver_name'] ?: '—') ?></td></tr>
+        <tr><td><?= e(date('d/m/Y H:i', strtotime($payment['created_at']))) ?></td><td><strong><?= e($payment['full_name']) ?></strong><small><?= e($payment['card_number']) ?></small></td><td><strong><?= number_format((float) $payment['amount'], 0, ',', '.') ?>đ</strong></td><td><?= ['cash' => 'Tiền mặt', 'bank_transfer' => 'Chuyển khoản', 'card' => 'Thẻ', 'other' => 'Khác'][$payment['method']] ?? e($payment['method']) ?></td><td><?= e($payment['reference_code'] ?: '—') ?></td><td><?= e($payment['receiver_name'] ?: '—') ?><br><a class="pdf-link" href="<?= e(url('/receipts/payment/'.$payment['id'])) ?>">Biên nhận PDF</a></td></tr>
       <?php endforeach; ?>
     </tbody></table></div>
   <?php else: ?><div class="empty-inline">Chưa có giao dịch thanh toán nào.</div><?php endif; ?>

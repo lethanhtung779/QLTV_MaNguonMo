@@ -46,7 +46,8 @@ final class FineController extends Controller
                 request_string('method', 30, true),
                 request_string('reference_code', 120),
                 request_string('note', 300),
-                (int) $user['id']
+                (int) $user['id'],
+                request_mutation_key()
             );
             $this->success('Đã ghi nhận và phân bổ khoản thanh toán.', '/admin/fines?reader=' . $readerId);
         } catch (InvalidArgumentException|RuntimeException $exception) {

@@ -7,14 +7,57 @@ use PDO;
 
 final class LoanRepository
 {
+    public const OPERATIONAL_FILTER = 'COALESCE(l.note, "") NOT LIKE "DEMO_FIXTURE:%" AND r.card_number NOT LIKE "DEMO-%" AND r.card_number NOT LIKE "READ-%" AND NOT EXISTS (SELECT 1 FROM loan_items fli JOIN book_copies fcp ON fcp.id = fli.book_copy_id JOIN books fb ON fb.id = fcp.book_id WHERE fli.loan_id = l.id AND (fb.book_code LIKE "DEMO-%" OR fcp.copy_code LIKE "DEMO-%" OR fb.title LIKE "Tủ sách minh họa%"))';
+
     public function __construct(private readonly PDO $db)
     {
     }
 
-    public function all(string $query = '', string $status = ''): array
+    public function operationalKpis(bool $realOnly = true): array
     {
+        $filter = $realOnly ? self::OPERATIONAL_FILTER : '1=1';
+        $sql = "
+            SELECT 
+                COUNT(DISTINCT CASE WHEN EXISTS (SELECT 1 FROM loan_items li WHERE li.loan_id = l.id AND li.returned_at IS NULL) THEN l.id END) AS active_loans,
+                COUNT(DISTINCT CASE WHEN EXISTS (SELECT 1 FROM loan_items li WHERE li.loan_id = l.id AND li.returned_at IS NULL AND li.due_date < CURRENT_DATE) THEN l.id END) AS overdue_loans,
+                COUNT(DISTINCT CASE WHEN NOT EXISTS (SELECT 1 FROM loan_items li WHERE li.loan_id = l.id AND li.returned_at IS NULL) THEN l.id END) AS returned_loans,
+                COUNT(DISTINCT l.id) AS total_loans
+            FROM loans l
+            JOIN readers r ON r.id = l.reader_id
+            WHERE {$filter}
+        ";
+        $row = $this->db->query($sql)->fetch(PDO::FETCH_ASSOC);
+        return $row ?: ['active_loans' => 0, 'overdue_loans' => 0, 'returned_loans' => 0, 'total_loans' => 0];
+    }
+
+    public function all(
+        string $query = '',
+        string $status = '',
+        ?int $limit = null,
+        int $offset = 0,
+        bool $count = false,
+        bool $realOnly = true,
+        string $dateFrom = '',
+        string $dateTo = ''
+    ): array {
         $sql = $this->headerSelect() . ' WHERE 1 = 1';
         $params = [];
+
+        if ($realOnly) {
+            $sql .= ' AND (' . self::OPERATIONAL_FILTER . ')';
+        } else {
+            $sql .= ' AND NOT (' . self::OPERATIONAL_FILTER . ')';
+        }
+
+        if ($dateFrom !== '') {
+            $sql .= ' AND l.borrowed_at >= :date_from';
+            $params['date_from'] = $dateFrom;
+        }
+        if ($dateTo !== '') {
+            $sql .= ' AND l.borrowed_at <= :date_to';
+            $params['date_to'] = $dateTo;
+        }
+
         if ($query !== '') {
             $sql .= ' AND (
                 l.loan_code LIKE :search_code OR r.full_name LIKE :search_name OR r.card_number LIKE :search_card
@@ -28,7 +71,7 @@ final class LoanRepository
                 )
             )';
             $search = '%' . $query . '%';
-            $params = [
+            $params += [
                 'search_code' => $search,
                 'search_name' => $search,
                 'search_card' => $search,
@@ -46,10 +89,15 @@ final class LoanRepository
         } elseif ($status === 'active') {
             $sql .= ' AND EXISTS (SELECT 1 FROM loan_items active_item WHERE active_item.loan_id = l.id AND active_item.returned_at IS NULL)';
         }
-        $sql .= ' GROUP BY l.id, r.id ORDER BY l.borrowed_at DESC, l.id DESC';
+        $sql .= ' GROUP BY l.id, r.id';
+        if ($count) $sql = 'SELECT COUNT(*) FROM (' . $sql . ') counted_loans';
+        else {
+            $sql .= ' ORDER BY l.borrowed_at DESC, l.id DESC';
+            if ($limit !== null) $sql .= ' LIMIT '.max(1,min(100,$limit)).' OFFSET '.max(0,$offset);
+        }
         $statement = $this->db->prepare($sql);
         $statement->execute($params);
-        return $statement->fetchAll();
+        return $count ? [(int)$statement->fetchColumn()] : $statement->fetchAll();
     }
 
     public function forReader(int $readerId): array
@@ -58,7 +106,7 @@ final class LoanRepository
             'SELECT l.*, li.id AS loan_item_id, li.book_copy_id, li.borrowed_at AS item_borrowed_at,
                     li.due_date AS due_at, li.returned_at AS returned_at, li.returned_at AS item_returned_at, li.daily_fine,
                     (SELECT COUNT(*) FROM loan_renewals lr WHERE lr.loan_item_id = li.id) AS renewal_count,
-                    b.book_code, b.title AS book_title, cp.copy_code,
+                    b.book_code, b.title AS book_title, b.id AS book_id, b.author, b.isbn, b.cover_url, b.category_id, cp.copy_code,
                     CASE WHEN li.returned_at IS NOT NULL THEN "returned"
                          WHEN li.due_date < CURRENT_DATE THEN "overdue"
                          ELSE "borrowed" END AS loan_status,
@@ -84,7 +132,7 @@ final class LoanRepository
         $statement = $this->db->prepare(
             'SELECT li.*, cp.book_id, cp.copy_code, cp.item_condition, cp.status AS copy_status,
                     (SELECT COUNT(*) FROM loan_renewals lr WHERE lr.loan_item_id = li.id) AS renewal_count,
-                    b.title AS book_title, b.book_code,
+                    b.title AS book_title, b.book_code, b.author, b.isbn, b.cover_url, b.category_id,
                     CASE WHEN li.returned_at IS NOT NULL THEN "returned"
                          WHEN li.due_date < CURRENT_DATE THEN "overdue"
                          ELSE "borrowed" END AS loan_status,
@@ -133,18 +181,19 @@ final class LoanRepository
         return (int) $statement->fetchColumn();
     }
 
-    public function availableCopies(): array
+    public function availableCopies(bool $realOnly = true): array
     {
+        $filter = $realOnly ? "AND b.book_code NOT LIKE 'DEMO-%'" : "";
         return $this->db->query(
-            'SELECT cp.id, cp.book_id, cp.copy_code, b.title, b.book_code,
+            "SELECT cp.id, cp.book_id, cp.copy_code, cp.barcode, cp.shelf_location, b.title, b.book_code,
                     cp.status, r.card_number AS reserved_card
              FROM book_copies cp JOIN books b ON b.id = cp.book_id
-             LEFT JOIN reservations res ON res.book_copy_id=cp.id AND res.status="ready"
+             LEFT JOIN reservations res ON res.book_copy_id=cp.id AND res.status='ready'
                   AND (res.expires_at IS NULL OR res.expires_at >= NOW())
              LEFT JOIN readers r ON r.id=res.reader_id
-             WHERE (cp.status="available" OR (cp.status="reserved" AND res.id IS NOT NULL))
-               AND cp.item_condition IN ("good","worn") AND b.is_active=1
-             ORDER BY b.title, cp.copy_code'
+             WHERE (cp.status='available' OR (cp.status='reserved' AND res.id IS NOT NULL))
+               AND cp.item_condition IN ('good','worn') AND b.is_active=1 {$filter}
+             ORDER BY b.title, cp.copy_code"
         )->fetchAll();
     }
 
@@ -292,9 +341,9 @@ final class LoanRepository
     public function markItemReturned(int $itemId, int $copyId, string $condition): void
     {
         $returned = $this->db->prepare(
-            'UPDATE loan_items SET returned_at = CURRENT_DATE WHERE id = :id AND returned_at IS NULL'
+            'UPDATE loan_items SET returned_at = CURRENT_DATE, return_condition = :condition WHERE id = :id AND returned_at IS NULL'
         );
-        $returned->execute(['id' => $itemId]);
+        $returned->execute(['id' => $itemId, 'condition' => $condition]);
         $status = match ($condition) {
             'damaged' => 'damaged',
             'lost' => 'lost',
@@ -357,6 +406,33 @@ final class LoanRepository
         return (float) $statement->fetchColumn();
     }
 
+    /**
+     * Recent operational loans only. Demo fixtures stay intact in MySQL,
+     * but cannot appear in the public-facing operations dashboard.
+     */
+    public function recentOperational(int $limit = 7): array
+    {
+        $limit = max(1, min(30, $limit));
+        $sql = $this->headerSelect() . '
+'
+            . ' WHERE r.card_number NOT LIKE "DEMO-%"'
+            . ' AND COALESCE(l.note, "") NOT LIKE "DEMO_FIXTURE:%"'
+            . ' AND EXISTS ('
+            . ' SELECT 1 FROM loan_items valid_li'
+            . ' JOIN book_copies valid_cp ON valid_cp.id = valid_li.book_copy_id'
+            . ' JOIN books valid_b ON valid_b.id = valid_cp.book_id'
+            . ' WHERE valid_li.loan_id = l.id AND valid_b.book_code NOT LIKE "DEMO-%"'
+            . ' )'
+            . ' AND NOT EXISTS ('
+            . ' SELECT 1 FROM loan_items demo_li'
+            . ' JOIN book_copies demo_cp ON demo_cp.id = demo_li.book_copy_id'
+            . ' JOIN books demo_b ON demo_b.id = demo_cp.book_id'
+            . ' WHERE demo_li.loan_id = l.id AND demo_b.book_code LIKE "DEMO-%"'
+            . ' )'
+            . ' GROUP BY l.id, r.id ORDER BY l.created_at DESC, l.id DESC LIMIT ' . $limit;
+        return $this->db->query($sql)->fetchAll();
+    }
+
     public function recent(int $limit = 6): array
     {
         $limit = max(1, min(30, $limit));
@@ -376,10 +452,10 @@ final class LoanRepository
         return $statement->fetchAll();
     }
 
-    public function reportRows(string $dateFrom, string $dateTo, string $status = '', int $limit = 10001): array
+    public function reportRows(string $dateFrom, string $dateTo, string $status = '', int $limit = 10001, int $offset = 0, bool $count = false, bool $realOnly = false): array
     {
         $limit = max(1, min(10001, $limit));
-        $sql = 'SELECT l.loan_code, r.card_number, r.full_name, b.book_code, b.title, cp.copy_code,
+        $sql = 'SELECT l.loan_code, r.card_number, r.full_name, b.book_code, b.title, b.author, b.isbn, b.cover_url, b.category_id, cp.copy_code,
                        li.borrowed_at, li.due_date, li.returned_at, li.daily_fine,
                        CASE WHEN li.returned_at IS NOT NULL THEN "returned"
                             WHEN li.due_date < CURRENT_DATE THEN "overdue" ELSE "borrowed" END AS item_status,
@@ -395,6 +471,10 @@ final class LoanRepository
                 JOIN books b ON b.id = cp.book_id
                 WHERE li.borrowed_at >= :date_from
                   AND li.borrowed_at < DATE_ADD(:date_to, INTERVAL 1 DAY)';
+        if ($count) $sql = 'SELECT COUNT(*) ' . substr($sql, strpos($sql,'FROM loan_items li'));
+        if ($realOnly) {
+            $sql .= ' AND '.RealStatisticsRepository::LOAN_FILTER;
+        }
         $params = ['date_from' => $dateFrom, 'date_to' => $dateTo];
         if ($status === 'returned') {
             $sql .= ' AND li.returned_at IS NOT NULL';
@@ -403,10 +483,10 @@ final class LoanRepository
         } elseif ($status === 'borrowed') {
             $sql .= ' AND li.returned_at IS NULL AND li.due_date >= CURRENT_DATE';
         }
-        $sql .= ' ORDER BY li.borrowed_at DESC, li.id DESC LIMIT ' . $limit;
+        if (!$count) $sql .= ' ORDER BY li.borrowed_at DESC, li.id DESC LIMIT ' . $limit . ' OFFSET ' . max(0,$offset);
         $statement = $this->db->prepare($sql);
         $statement->execute($params);
-        return $statement->fetchAll();
+        return $count ? [(int)$statement->fetchColumn()] : $statement->fetchAll();
     }
 
     public function updateReservation(int $id, string $status, ?int $userId, ?int $copyId = null, int $expiryDays = 3): bool
@@ -445,15 +525,16 @@ final class LoanRepository
         return $reservation ?: null;
     }
 
-    public function reservations(): array
+    public function reservations(bool $realOnly = true): array
     {
+        $filter = $realOnly ? "AND b.book_code NOT LIKE 'DEMO-%' AND r.card_number NOT LIKE 'DEMO-%' AND r.card_number NOT LIKE 'READ-%'" : "";
         return $this->db->query(
-            'SELECT res.*, r.card_number, r.full_name, b.book_code, b.title, cp.copy_code
+            "SELECT res.*, r.card_number, r.full_name, b.book_code, b.title, b.author, b.isbn, b.cover_url, b.category_id, cp.copy_code
              FROM reservations res JOIN readers r ON r.id = res.reader_id
              JOIN books b ON b.id = res.book_id
              LEFT JOIN book_copies cp ON cp.id = res.book_copy_id
-             WHERE res.status IN ("pending", "ready")
-             ORDER BY FIELD(res.status, "ready", "pending"), res.reserved_at'
+             WHERE res.status IN ('pending', 'ready') {$filter}
+             ORDER BY FIELD(res.status, 'ready', 'pending'), res.reserved_at"
         )->fetchAll();
     }
 

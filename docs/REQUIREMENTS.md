@@ -1,9 +1,11 @@
-# Yêu cầu và trạng thái cuối
+# Yêu cầu và trạng thái — 11/10/2026
 
-Bản PHP server-rendered/MySQL, không làm lại frontend hay dùng localStorage cho nghiệp vụ. Giữ Forest Green #193E30, Paper Cream #F8F3EB, Beige #E8D8C5, Gold #C58B54, Ink #302B25, serif headings/Inter body.
+Nguồn PHP/MySQL chính thức QLTV_MaNguonMo-github-stage, branch minh, document root public/. Không dùng index.html cũ hoặc localStorage cho nghiệp vụ.
 
-Đã có và kiểm chứng: public/auth/ba vai trò; CRUD sách/độc giả/thể loại/tác giả/NXB; copy riêng/mã/barcode/kệ/tình trạng; catalog sort/filter/pagination và reader pagination; mượn nhiều copy/trả phần/gia hạn/FIFO/expiry; ledger phí/thu một phần/miễn giảm; report CSV mượn/kho/phí; thông báo sắp/quá hạn/reservation, policy version và hồ sơ/mật khẩu. Runtime PHP8.3.33/MySQL8.4.3, source migrations 001–006; kiểm thử DB ghi trên clone riêng.
+Giữ PAPER & PAGE #193E30/#F8F3EB/#E8D8C5/#C58B54/#302B25; tiêu đề Playfair/Cormorant, nội dung Inter/Lato.
 
-P0/P1 đã xử lý theo FINAL_GAP_ANALYSIS.md. Responsive kiểm tra 22 màn/route ở 5 viewport và native modal/sidebar/form. Báo cáo nghiệm thu TEST_REPORT.md ghi PASS/FAIL/BLOCKED thực tế; Git diff BLOCKED do không có .git.
+Đã triển khai public/auth/ba vai trò/nhân viên/22 quyền; CRUD sách/thẻ/metadata/copies/barcode/kệ; upload PNG/JPEG/WebP; mượn nhiều/trả phần,toàn bộ/gia hạn/đặt trước FIFO; ledger phí/thu/miễn giảm; PDF tiếng Việt/ownership; CSV/report/pagination; notifications/policy/profile/password; backup/restore.
 
-Ngoài phạm vi hiện tại/chưa có: PDF, upload ảnh, REST API, permission matrix cấu hình/UI nhân viên, pipeline CI. Không chứng nhận security audit/production/TLS/load/backup restore hoặc mọi khác biệt MariaDB.
+Migrations001–008; PHP8.3.33/MySQL8.4.3 local. Không reset main; test ghi trên DB riêng; PASS cần evidence. [Bảng trạng thái mới](AUDIT_REPORT_20261011.md), [checklist](FINAL_SPRINT_PLAN.md), [nghiệm thu cũ10/10](TEST_REPORT.md).
+
+CHƯA CÓ: REST API/CI/vai trò tùy ý. CHƯA KIỂM CHỨNG: publicHTTPS/Linux/MariaDB/load/pentest/job scheduler thực tế; không coi là đã hoàn thành.

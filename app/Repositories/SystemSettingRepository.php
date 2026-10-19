@@ -105,6 +105,14 @@ final class SystemSettingRepository
         $revision->execute(['user_id' => $userId]);
     }
 
+    /** Read values and version from one immutable row, including under READ COMMITTED. */
+    public function currentPolicy(): array
+    {
+        $row=$this->db->query('SELECT * FROM library_policy_versions ORDER BY id DESC LIMIT 1')->fetch();
+        if (!$row) throw new RuntimeException('Chưa có phiên bản chính sách thư viện.');
+        return $row;
+    }
+
     public function currentPolicyVersion(): int
     {
         return (int) $this->db->query('SELECT COALESCE(MAX(id), 1) FROM library_policy_versions')->fetchColumn();

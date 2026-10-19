@@ -13,8 +13,25 @@ final class CopyRepository
         $s=$this->db->prepare('SELECT cp.*, (SELECT COUNT(*) FROM loan_items li WHERE li.book_copy_id=cp.id) AS history_count FROM book_copies cp WHERE book_id=? ORDER BY cp.id');
         $s->execute([$bookId]); return $s->fetchAll();
     }
+    public function findForLabel(string $copyCode): ?array
+    {
+        $s=$this->db->prepare(
+            'SELECT cp.id,cp.copy_code,cp.barcode,cp.status,cp.item_condition,b.id AS book_id,b.is_active,b.is_public
+             FROM book_copies cp JOIN books b ON b.id=cp.book_id
+             WHERE cp.copy_code=? OR cp.barcode=? LIMIT 1'
+        );
+        $s->execute([$copyCode, $copyCode]);
+        $copy=$s->fetch();
+        return $copy ?: null;
+    }
     public function save(int $bookId, int $id, array $data, int $actor): int
     {
+        if (!preg_match('/\A[A-Za-z0-9._-]{1,60}\z/', (string) $data['copy_code'])) {
+            throw new RuntimeException('Mã bản sao chỉ được gồm chữ, số, dấu chấm, gạch dưới và gạch ngang (tối đa 60 ký tự).');
+        }
+        if ($data['barcode'] !== null && !preg_match('/\A[\x20-\x7E]{1,80}\z/', (string) $data['barcode'])) {
+            throw new RuntimeException('Mã vạch phải gồm 1–80 ký tự ASCII in được.');
+        }
         if (!in_array($data['status'], ['available','damaged','lost','retired'], true) ||
             !in_array($data['item_condition'], ['good','worn','damaged','lost'], true)) throw new RuntimeException('Trạng thái bản sao không hợp lệ.');
         if ($data['status']==='available' && in_array($data['item_condition'], ['damaged','lost'], true)) throw new RuntimeException('Sách hỏng hoặc mất không thể đưa lên kệ phục vụ.');

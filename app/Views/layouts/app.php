@@ -2,12 +2,70 @@
 $user = current_user();
 $role = (string) ($user['role'] ?? '');
 $reader = $role === 'reader';
-$navigation = $reader
-  ? [['/account', '⌂', 'Tổng quan'], ['/catalog', '▤', 'Khám phá sách'], ['/account/profile', '♙', 'Hồ sơ độc giả'], ['/notifications', '♧', 'Thông báo']]
-  : [['/admin', '▦', 'Tổng quan'], ['/admin/books', '▤', 'Quản lý sách'], ['/admin/readers', '♙', 'Độc giả'], ['/admin/loans', '⇄', 'Mượn / Trả sách'], ['/admin/fines', '₫', 'Phí & thanh toán'], ['/admin/categories', '◇', 'Thể loại'], ['/admin/authors', '✎', 'Tác giả'], ['/admin/publishers', '▤', 'Nhà xuất bản'], ['/admin/statistics', '▥', 'Thống kê'], ['/profile', '♙', 'Hồ sơ tài khoản'], ['/notifications', '♧', 'Thông báo']];
-if ($role === 'admin') {
-  $navigation[] = ['/admin/settings', '⚙', 'Cài đặt'];
+
+if ($reader) {
+    $navigationGroups = [
+        'KHÔNG GIAN ĐỘC GIẢ' => [
+            ['/account', '⌂', 'Tổng quan'],
+            ['/account/bookshelf', '♥', 'Tủ sách của tôi'],
+            ['/catalog', '▤', 'Khám phá sách'],
+            ['/account/profile', '♙', 'Hồ sơ độc giả'],
+            ['/notifications', '♧', 'Thông báo'],
+        ]
+    ];
+} else {
+    $navigationGroups = [
+        'TỔNG QUAN' => [
+            ['/admin', '▦', 'Bảng điều khiển'],
+            ['/admin/statistics', '▥', 'Báo cáo thống kê'],
+            ['/admin/metadata-quality', '✓', 'Chất lượng Metadata'],
+        ],
+        'KHO & BIÊN MỤC' => [
+            ['/admin/books', '▤', 'Quản lý sách'],
+            ['/admin/books/import', '＋', 'Nhập sách hàng loạt'],
+            ['/admin/inventory/audits', '✓', 'Kiểm kê kho'],
+            ['/admin/print-labels', '▤', 'In tem & Mã vạch'],
+            ['/admin/categories', '◇', 'Thể loại'],
+            ['/admin/authors', '✎', 'Tác giả'],
+            ['/admin/publishers', '▤', 'Nhà xuất bản'],
+        ],
+        'LƯU HÀNH & ĐỘC GIẢ' => [
+            ['/admin/loans', '⇄', 'Mượn / Trả sách'],
+            ['/admin/readers', '♙', 'Độc giả'],
+            ['/admin/fines', '₫', 'Phí & thanh toán'],
+            ['/admin/reviews', '★', 'Đánh giá bạn đọc'],
+        ],
+    ];
+
+    if ($role === 'admin') {
+        $navigationGroups['QUẢN TRỊ HỆ THỐNG'] = [
+            ['/admin/users', '♙', 'Nhân viên'],
+            ['/admin/permissions', '◇', 'Phân quyền'],
+            ['/admin/activity', '▤', 'Nhật ký hoạt động'],
+            ['/admin/settings', '⚙', 'Cài đặt hệ thống'],
+        ];
+    }
 }
+
+// Filter permissions for staff
+$filteredGroups = [];
+foreach ($navigationGroups as $groupTitle => $links) {
+    $validLinks = [];
+    foreach ($links as $link) {
+        if ($reader) {
+            $validLinks[] = $link;
+        } else {
+            $permission = \Library\Core\Permissions::route('GET', $link[0]);
+            if ($permission === null || can($permission)) {
+                $validLinks[] = $link;
+            }
+        }
+    }
+    if (!empty($validLinks)) {
+        $filteredGroups[$groupTitle] = $validLinks;
+    }
+}
+
 $route = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/');
 ?>
 <!doctype html>
@@ -16,7 +74,7 @@ $route = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#193E30">
-  <title><?= e($title ?? 'Quản lý') ?> · Paper & Page</title>
+  <title><?= e($title ?? 'Quản lý') ?> · Paper Haven</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -27,21 +85,26 @@ $route = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/
   <div class="staff-shell">
     <aside class="staff-sidebar" data-sidebar>
       <a class="brand-lockup sidebar-brand" href="<?= e(url($reader ? '/account' : '/admin')) ?>">
-        <span class="brand-mark">P<span>&</span></span>
-        <span class="brand-name">PAPER <em>&</em> PAGE<small><?= $reader ? 'THẺ ĐỘC GIẢ' : 'THƯ VIỆN CỘNG ĐỒNG' ?></small></span>
+        <span class="brand-mark">P<span>H</span></span>
+        <span class="brand-name">PAPER <em>HAVEN</em><small><?= $reader ? 'THẺ ĐỘC GIẢ' : 'THƯ VIỆN TRỰC TUYẾN' ?></small></span>
       </a>
-      <span class="sidebar-caption"><?= $reader ? 'KHÔNG GIAN CỦA BẠN' : 'QUẢN LÝ THƯ VIỆN' ?></span>
       <nav class="staff-nav">
-        <?php foreach ($navigation as [$path, $icon, $label]): ?>
-          <a class="staff-nav-link <?= '/' . $route === $path || ($path !== '/admin' && str_starts_with('/' . $route, $path . '/')) ? 'active' : '' ?>" href="<?= e(url($path)) ?>">
-            <span><?= e($icon) ?></span><?= e($label) ?>
-          </a>
+        <?php foreach ($filteredGroups as $groupTitle => $links): ?>
+          <div class="sidebar-nav-group">
+            <span class="sidebar-group-heading"><?= e($groupTitle) ?></span>
+            <?php foreach ($links as [$path, $icon, $label]): ?>
+              <?php 
+                $isActive = '/' . $route === $path || ($path !== '/admin' && str_starts_with('/' . $route, $path . '/'));
+              ?>
+              <a class="staff-nav-link <?= $isActive ? 'active' : '' ?>" href="<?= e(url($path)) ?>" title="<?= e($label) ?>">
+                <span class="nav-icon"><?= e($icon) ?></span>
+                <span class="nav-label"><?= e($label) ?></span>
+              </a>
+            <?php endforeach; ?>
+          </div>
         <?php endforeach; ?>
       </nav>
       <div class="sidebar-bottom">
-        <?php if (!$reader): ?>
-          <div class="sidebar-help"><span>✦</span><strong>Góc đọc yên bình</strong><small>Chăm chút từng trang sách, vun bồi cộng đồng đọc.</small></div>
-        <?php endif; ?>
         <a class="staff-nav-link" href="<?= e(url('/')) ?>"><span>↗</span>Xem trang thư viện</a>
         <form action="<?= e(url('/logout')) ?>" method="post"><?= csrf_field() ?><button class="staff-nav-link logout-button"><span>⇥</span>Đăng xuất</button></form>
       </div>
@@ -49,7 +112,7 @@ $route = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/
     <div class="staff-main">
       <header class="staff-header">
         <button class="mobile-menu-toggle staff-menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-label="Mở menu">☰</button>
-        <div class="breadcrumb"><a href="<?= e(url($reader ? '/account' : '/admin')) ?>">Paper & Page</a><span>/</span><strong><?= e($title ?? 'Tổng quan') ?></strong></div>
+        <div class="breadcrumb"><a href="<?= e(url($reader ? '/account' : '/admin')) ?>">Paper Haven</a><span>/</span><strong><?= e($title ?? 'Tổng quan') ?></strong></div>
         <div class="staff-header-actions">
           <?php if (!$reader): ?>
             <form class="header-search staff-search" action="<?= e(url('/admin/books')) ?>" method="get"><label class="sr-only" for="staffSearch">Tìm kiếm</label><input id="staffSearch" type="search" name="q" placeholder="Tìm sách, độc giả..." value="<?= e(query_string('q')) ?>"><button aria-label="Tìm kiếm">⌕</button></form>
@@ -67,9 +130,10 @@ $route = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/
         <?php if ($message = flash('error')): ?><div class="flash-message error" role="alert"><?= e($message) ?></div><?php endif; ?>
         <?= $content ?>
       </main>
-      <footer class="staff-footer">Paper & Page <span>·</span> Quản lý thư viện cộng đồng</footer>
+      <footer class="staff-footer">Paper Haven <span>·</span> Hệ thống quản lý thư viện trực tuyến</footer>
     </div>
   </div>
   <div class="mobile-backdrop" data-backdrop hidden></div>
+<?php require dirname(__DIR__) . '/partials/chat_widget.php'; ?>
 </body>
 </html>

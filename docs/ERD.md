@@ -182,3 +182,16 @@ erDiagram
 ```
 
 ERD thể hiện schema sau migration `006`; `books.author` và `books.publisher` vẫn được giữ làm trường legacy trong giai đoạn tương thích.
+
+## Migrations 007–008
+
+~~~mermaid
+erDiagram
+    permissions ||--o{ role_permissions : default_grants
+    permissions ||--o{ user_permissions : overrides
+    users ||--o{ user_permissions : grants
+    users ||--o{ readers : owns
+    loans ||--|{ loan_items : includes
+~~~
+
+permissions.code → role_permissions.permission_code và user_permissions.permission_code; users.id → user_permissions.user_id. loan_items.return_condition lưu good/worn/damaged/lost; lịch sử cũ NULL. Sau migration: 24 bảng, 34 khóa ngoại.

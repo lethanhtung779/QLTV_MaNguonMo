@@ -52,3 +52,16 @@ flowchart LR
 ## Hoàn thiện 08/10/2026
 
 InventoryController → CopyRepository/MetadataRepository; ProfileController cho staff; Pagination điều phối LIMIT/OFFSET; ReportRepository cho kho/phí; ReminderService và maintenance CLI. LoginThrottle dùng file hash email/IP với flock ngoài public/, không lưu credential. Session strict/timeout; require_auth xác minh tài khoản/role hiện hành từ DB. Không tạo ARCHITECTURE.md trùng; tài liệu kiến trúc chính là tệp này.
+
+## Sprint sản phẩm 10/10/2026
+
+- Router kiểm tra hành động bằng Permissions và DB role/user_permissions trước dispatch.
+- StaffController quản lý nhân viên/quyền/nhật ký; transaction chặn mất Admin cuối cùng.
+- CoverUpload kiểm tra MIME/dimensions, re-encode GD; lưu ngoài document root, trả MIME cố định.
+- ReceiptController kiểm tra owner/permission, MySQL → Dompdf/DejaVu Sans; remote/PHP disabled.
+- Return-all transaction chung; migration 008 lưu tình trạng trả riêng cho item.
+- Loan/Report có COUNT/LIMIT/OFFSET, lọc ngày và trang riêng kho/phí.
+
+## Module Trợ lý Thư viện
+
+Xem [kiến trúc chatbot](CHATBOT_ARCHITECTURE.md): endpoint JSON, context session, kiểm tra quyền mỗi yêu cầu, truy vấn MySQL định trước và adapter AI tùy chọn; không tạo database chat hoặc thực hiện nghiệp vụ ghi.

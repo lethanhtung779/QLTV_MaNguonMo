@@ -13,9 +13,9 @@ if (PHP_SAPI !== 'cli') {
 
 $email = strtolower(trim((string) Config::get('SEED_ADMIN_EMAIL', '')));
 $password = (string) Config::get('SEED_ADMIN_PASSWORD', '');
-if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 12 ||
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 12 || strlen($password) > 72 || str_contains($password, "\0") ||
     str_contains($password, 'ChangeThisAdminPassword')) {
-    fwrite(STDERR, "Hãy đặt SEED_ADMIN_EMAIL và mật khẩu mạnh (tối thiểu 12 ký tự) trong .env trước khi chạy.\n");
+    fwrite(STDERR, "Hãy đặt SEED_ADMIN_EMAIL và mật khẩu mạnh (12–72 byte) trong .env trước khi chạy.\n");
     exit(1);
 }
 

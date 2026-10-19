@@ -18,7 +18,7 @@ try {
         $db->exec($ddl);
         $columns=[];
         foreach ($db->query('SHOW COLUMNS FROM `'.$table.'`')->fetchAll() as $column) {
-            if (!str_contains($column['Extra'],'GENERATED')) $columns[]='`'.$column['Field'].'`';
+            if (!preg_match('/\b(?:VIRTUAL|STORED) GENERATED\b/i', $column['Extra'])) $columns[]='`'.$column['Field'].'`';
         }
         $list=implode(',',$columns);
         $db->exec('INSERT INTO `'.$target.'`.`'.$table.'` ('.$list.') SELECT '.$list.' FROM `'.$source.'`.`'.$table.'`');

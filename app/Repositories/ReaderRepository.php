@@ -11,7 +11,7 @@ final class ReaderRepository
     {
     }
 
-    public function all(string $query = '', ?int $limit = null, int $offset = 0, bool $inactive = false): array
+    public function all(string $query = '', ?int $limit = null, int $offset = 0, bool $inactive = false, bool $realOnly = false): array
     {
         $sql = 'SELECT r.*, u.email AS account_email,
             COALESCE(loan_stats.active_loans, 0) AS active_loans,
@@ -26,6 +26,9 @@ final class ReaderRepository
             ) loan_stats ON loan_stats.reader_id = r.id
             WHERE r.is_active = 1';
         $sql = str_replace('r.is_active = 1', 'r.is_active = ' . ($inactive ? '0' : '1'), $sql);
+        if ($realOnly) {
+            $sql .= " AND r.card_number NOT LIKE 'DEMO-%' AND r.card_number NOT LIKE 'READ-%'";
+        }
         $params = [];
         if ($query !== '') {
             $sql .= ' AND (r.card_number LIKE :search_card OR r.full_name LIKE :search_name OR r.email LIKE :search_email OR r.phone LIKE :search_phone)';

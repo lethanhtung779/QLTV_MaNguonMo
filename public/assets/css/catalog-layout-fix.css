@@ -1,0 +1,124 @@
+/* Paper Haven: catalog-only cover cards & practical pagination. Scoped to catalog. */
+.catalog-section .catalog-grid:not(.catalog-list) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.8vw, 24px);
+  align-items: stretch;
+}
+.catalog-section .catalog-grid:not(.catalog-list) .book-card {
+  min-width: 0;
+  height: 100%;
+}
+.catalog-section .catalog-grid:not(.catalog-list) .book-cover-wrap {
+  display: flex;
+  flex: 0 0 auto;
+  height: clamp(210px, 24vw, 318px);
+  min-height: 0;
+  aspect-ratio: auto;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #eee5d8;
+}
+.catalog-section .catalog-grid:not(.catalog-list) img.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+.catalog-section .catalog-grid:not(.catalog-list) .book-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  background: #f5efe6;
+  text-align: center;
+}
+.catalog-section .catalog-grid:not(.catalog-list) .book-card-copy {
+  min-width: 0;
+  padding: 15px;
+}
+.catalog-section .catalog-grid:not(.catalog-list) .book-card h3 {
+  margin: 5px 0 7px;
+  font-size: clamp(.99rem, 1.25vw, 1.12rem);
+  line-height: 1.42;
+}
+.catalog-section .catalog-grid:not(.catalog-list) .book-card-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px 12px;
+}
+.ph-catalog-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 18px;
+  margin: 24px auto 34px;
+  padding: 18px;
+  max-width: 1240px;
+  border: 1px solid #e5dacb;
+  border-radius: 12px;
+  background: #fffdfa;
+}
+.catalog-section .ph-catalog-pagination { margin-top: 14px; margin-bottom: 24px; }
+.ph-catalog-pagination-summary { margin: 0; color: #655b50; font-size: .86rem; white-space: nowrap; }
+.ph-catalog-pagination-summary strong { color: #193e30; }
+.ph-catalog-pagination-pages { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; }
+.ph-page-link, .ph-page-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 42px;
+  padding: 0 11px;
+  border: 1px solid #dfd3c3;
+  border-radius: 8px;
+  background: white;
+  color: #193e30;
+  font-size: .85rem;
+  font-weight: 650;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+}
+a.ph-page-link:hover, .ph-page-go:hover { background: #e8eee8; border-color: #193e30; }
+.ph-page-link.is-current { background: #193e30; color: #fffdfa; border-color: #193e30; }
+.ph-page-link.is-disabled { color: #aa9e91; background: #f8f5ef; cursor: default; }
+.ph-page-ellipsis { color: #83766a; font-size: 1rem; padding: 0 3px; }
+.ph-catalog-pagination-jump { display: flex; align-items: end; justify-content: center; gap: 7px; }
+.ph-catalog-pagination-jump label { display: flex; align-items: center; gap: 7px; font-size: .85rem; color: #625a50; white-space: nowrap; }
+.ph-catalog-pagination-jump input {
+  width: 65px;
+  height: 42px;
+  padding: 6px;
+  border: 1px solid #d5c9b8;
+  border-radius: 8px;
+  font-size: .9rem;
+  text-align: center;
+  background: white;
+}
+.ph-page-go { background: #193e30; color: white; border-color: #193e30; cursor: pointer; }
+.ph-page-go:hover { color: #193e30; }
+#catalog-results, #all-books { scroll-margin-top: 18px; }
+@media (max-width: 1100px) {
+  .catalog-section .catalog-grid:not(.catalog-list) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .catalog-section .catalog-grid:not(.catalog-list) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-section .catalog-grid:not(.catalog-list) .book-cover-wrap { height: clamp(185px, 35vw, 260px); }
+  .ph-catalog-pagination { margin-left: 14px; margin-right: 14px; padding: 14px 8px; }
+  .ph-page-link { min-width: 38px; height: 40px; padding: 0 8px; }
+  .ph-catalog-pagination-summary { width: 100%; text-align: center; }
+}
+@media (max-width: 430px) {
+  .catalog-section .catalog-grid:not(.catalog-list) { gap: 11px; }
+  .catalog-section .catalog-grid:not(.catalog-list) .book-cover-wrap { height: clamp(158px, 46vw, 214px); }
+  .catalog-section .catalog-grid:not(.catalog-list) .book-card-copy { padding: 11px; }
+  .catalog-section .catalog-grid:not(.catalog-list) .book-card h3 { font-size: .94rem; }
+  .ph-catalog-pagination { gap: 10px; }
+  .ph-page-link.ph-page-edge { display: none; }
+  .ph-catalog-pagination-pages { gap: 4px; }
+  .ph-page-link { min-width: 35px; height: 38px; padding: 0 7px; font-size: .78rem; }
+  .ph-catalog-pagination-jump { width: 100%; }
+}

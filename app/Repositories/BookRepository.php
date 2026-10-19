@@ -13,9 +13,10 @@ final class BookRepository
     {
     }
 
-    public function search(string $query = '', int $categoryId = 0, string $availability = '', ?int $limit = null, int $offset = 0, string $sort = 'newest'): array
+    public function search(string $query = '', int $categoryId = 0, string $availability = '', ?int $limit = null, int $offset = 0, string $sort = 'newest', bool $publicOnly = false, string $publisher = '', int $year = 0): array
     {
         $sql = $this->selectSql() . ' WHERE b.is_active = 1';
+        if ($publicOnly) $sql .= ' AND b.is_public = 1';
         $params = [];
         if ($query !== '') {
             $sql .= ' AND (b.book_code LIKE :search_code OR b.title LIKE :search_title OR b.author LIKE :search_author OR b.isbn LIKE :search_isbn OR c.name LIKE :search_category)';
@@ -32,6 +33,14 @@ final class BookRepository
             $sql .= ' AND b.category_id = :category_id';
             $params['category_id'] = $categoryId;
         }
+        if ($publisher !== '') {
+            $sql .= ' AND b.publisher = :publisher';
+            $params['publisher'] = $publisher;
+        }
+        if ($year > 0) {
+            $sql .= ' AND b.publication_year = :publication_year';
+            $params['publication_year'] = $year;
+        }
         if ($availability === 'available') {
             $sql .= ' AND (SELECT COUNT(*) FROM book_copies cp WHERE cp.book_id = b.id AND cp.status = "available") >
                 (SELECT COUNT(*) FROM reservations r WHERE r.book_id = b.id AND r.status = "ready"
@@ -41,7 +50,12 @@ final class BookRepository
                 (SELECT COUNT(*) FROM reservations r WHERE r.book_id = b.id AND r.status = "ready"
                  AND r.book_copy_id IS NULL AND (r.expires_at IS NULL OR r.expires_at >= NOW()))';
         }
-        $orders = ['newest' => 'b.updated_at DESC, b.id DESC', 'title' => 'b.title ASC, b.id ASC', 'author' => 'b.author ASC, b.id ASC'];
+        $orders = [
+            'newest' => 'b.updated_at DESC, b.id DESC',
+            'popular' => '(SELECT COUNT(*) FROM loan_items li JOIN book_copies cp ON cp.id = li.book_copy_id WHERE cp.book_id = b.id) DESC, b.title ASC, b.id ASC',
+            'title' => 'b.title ASC, b.id ASC',
+            'author' => 'b.author ASC, b.id ASC',
+        ];
         $sql .= ' ORDER BY ' . ($orders[$sort] ?? $orders['newest']);
         if ($limit !== null) {
             $sql .= ' LIMIT ' . max(1, min(100, $limit)) . ' OFFSET ' . max(0, $offset);
@@ -52,15 +66,18 @@ final class BookRepository
         return $statement->fetchAll();
     }
 
-    public function countSearch(string $query = '', int $categoryId = 0, string $availability = ''): int
+    public function countSearch(string $query = '', int $categoryId = 0, string $availability = '', bool $publicOnly = false, string $publisher = '', int $year = 0): int
     {
         $sql = 'SELECT COUNT(*) FROM books b LEFT JOIN categories c ON c.id = b.category_id WHERE b.is_active = 1';
+        if ($publicOnly) $sql .= ' AND b.is_public = 1';
         $params = [];
         if ($query !== '') {
             $sql .= ' AND (b.book_code LIKE ? OR b.title LIKE ? OR b.author LIKE ? OR b.isbn LIKE ? OR c.name LIKE ?)';
             $params = array_fill(0, 5, '%' . $query . '%');
         }
         if ($categoryId > 0) { $sql .= ' AND b.category_id = ?'; $params[] = $categoryId; }
+        if ($publisher !== '') { $sql .= ' AND b.publisher = ?'; $params[] = $publisher; }
+        if ($year > 0) { $sql .= ' AND b.publication_year = ?'; $params[] = $year; }
         if (in_array($availability, ['available', 'unavailable'], true)) {
             $sql .= ' AND (SELECT COUNT(*) FROM book_copies cp WHERE cp.book_id=b.id AND cp.status="available") ' .
                 ($availability === 'available' ? '>' : '<=') .
@@ -70,9 +87,9 @@ final class BookRepository
         return (int) $stmt->fetchColumn();
     }
 
-    public function find(int $id): ?array
+    public function find(int $id, bool $publicOnly = false): ?array
     {
-        $statement = $this->db->prepare($this->selectSql() . ' WHERE b.id = :id AND b.is_active = 1');
+        $statement = $this->db->prepare($this->selectSql() . ' WHERE b.id = :id AND b.is_active = 1' . ($publicOnly ? ' AND b.is_public = 1' : ''));
         $statement->execute(['id' => $id]);
         $book = $statement->fetch();
         return $book ?: null;
@@ -86,9 +103,31 @@ final class BookRepository
         return $book ?: null;
     }
 
-    public function allCategories(): array
+    public function allCategories(bool $publicOnly = false): array
     {
-        return $this->db->query('SELECT id, name FROM categories ORDER BY name')->fetchAll();
+        $sql = 'SELECT c.id, c.name FROM categories c';
+        if ($publicOnly) {
+            $sql .= ' WHERE EXISTS (SELECT 1 FROM books b WHERE b.category_id=c.id AND b.is_active=1 AND b.is_public=1)';
+        }
+        return $this->db->query($sql . ' ORDER BY c.name')->fetchAll();
+    }
+
+    public function publicPublishers(): array
+    {
+        return $this->db->query(
+            'SELECT DISTINCT publisher FROM books
+             WHERE is_active = 1 AND is_public = 1 AND publisher IS NOT NULL AND publisher <> ""
+             ORDER BY publisher'
+        )->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function publicPublicationYears(): array
+    {
+        return $this->db->query(
+            'SELECT DISTINCT publication_year FROM books
+             WHERE is_active = 1 AND is_public = 1 AND publication_year IS NOT NULL
+             ORDER BY publication_year DESC'
+        )->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function create(array $data): int
@@ -192,6 +231,38 @@ final class BookRepository
         return $statement->fetchAll();
     }
 
+    public function publicPopular(int $limit = 5): array
+    {
+        $limit = max(1, min(20, $limit));
+        $statement = $this->db->query(
+            $this->selectSql() . ' WHERE b.is_active = 1 AND b.is_public = 1
+             ORDER BY (SELECT COUNT(*) FROM loan_items li
+                       JOIN book_copies cp ON cp.id = li.book_copy_id
+                       WHERE cp.book_id = b.id) DESC, available_copies DESC, b.title, b.id LIMIT ' . $limit
+        );
+        return $statement->fetchAll();
+    }
+
+    public function publicCategoryCollections(int $limit = 8): array
+    {
+        $limit = max(1, min(20, $limit));
+        $statement = $this->db->query(
+            'SELECT c.id, c.name, COUNT(b.id) AS book_count
+             FROM categories c
+             JOIN books b ON b.category_id = c.id AND b.is_active = 1 AND b.is_public = 1
+             GROUP BY c.id, c.name
+             ORDER BY book_count DESC, c.name ASC
+             LIMIT ' . $limit
+        );
+        return $statement->fetchAll();
+    }
+
+    public function featured(int $limit = 5): array
+    {
+        $limit = max(1, min(20, $limit));
+        return $this->db->query($this->selectSql() . " WHERE b.is_active=1 AND b.is_public=1 AND b.cover_url LIKE '/assets/book-covers/%' ORDER BY b.title, b.id LIMIT " . $limit)->fetchAll();
+    }
+
     public function metrics(): array
     {
         $statement = $this->db->query(
@@ -202,6 +273,29 @@ final class BookRepository
              FROM (' . $this->inventorySql() . ') inventory'
         );
         return $statement->fetch() ?: ['title_count' => 0, 'copy_count' => 0, 'available_count' => 0, 'loaned_count' => 0];
+    }
+
+    public function chatSearch(string $query, int $limit = 5, bool $publicOnly = true): array
+    {
+        $query = trim(mb_substr($query, 0, 160));
+        $sql = $this->selectSql() . ' WHERE b.is_active=1' . ($publicOnly ? ' AND b.is_public=1' : '');
+        $params = [];
+        if ($query !== '') {
+            $tokens = array_values(array_unique(array_filter(explode(' ', $query), fn($v) => mb_strlen($v)>1)));
+            $terms = array_slice(array_unique(array_merge([$query], $tokens)), 0, 8);
+            $conditions = [];
+            foreach ($terms as $term) {
+                $conditions[] = '(b.book_code LIKE ? OR b.title COLLATE utf8mb4_0900_ai_ci LIKE ? OR b.author COLLATE utf8mb4_0900_ai_ci LIKE ? OR c.name COLLATE utf8mb4_0900_ai_ci LIKE ? OR b.description COLLATE utf8mb4_0900_ai_ci LIKE ? OR b.isbn LIKE ?)';
+                $escaped = str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $term);
+                array_push($params, ...array_fill(0, 6, '%' . $escaped . '%'));
+            }
+            if ($conditions) $sql .= ' AND (' . $conditions[0] . (count($conditions)>1 ? ' OR (' . implode(' AND ', array_slice($conditions,1)) . ')' : '') . ')';
+        }
+        $escapedExact = str_replace(['\\','%','_'], ['\\\\','\\%','\\_'], $query);
+        $orderSql = ' ORDER BY (CASE WHEN b.book_code = ? THEN 0 WHEN b.title COLLATE utf8mb4_0900_ai_ci = ? THEN 1 WHEN b.title COLLATE utf8mb4_0900_ai_ci LIKE ? THEN 2 ELSE 3 END), available_copies DESC, b.title, b.id LIMIT ' . max(1, min(10, $limit));
+        $q = $this->db->prepare($sql . $orderSql);
+        $q->execute(array_merge($params, [$query, $query, '%' . $escapedExact . '%']));
+        return $q->fetchAll();
     }
 
     private function selectSql(): string

@@ -7,6 +7,7 @@ use Library\Core\Session;
 use Library\Repositories\ActivityRepository;
 use Library\Repositories\ReaderRepository;
 use Library\Repositories\UserRepository;
+use Library\Services\LoginThrottle;
 use PDO;
 use RuntimeException;
 
@@ -28,7 +29,7 @@ final class AuthService
 
         $users = new UserRepository($this->db);
         $user = $users->findByEmail(mb_strtolower(trim($email)));
-        if (!$user || !(bool) $user['is_active'] || !password_verify($password, $user['password_hash'])) {
+        if (!$user || !(bool) $user['is_active'] || strlen($password) > 72 || str_contains($password, "\0") || !password_verify($password, $user['password_hash'])) {
             $throttle->failure($email);
             $attempts++;
             $_SESSION['_login_attempts'] = $attempts;
@@ -54,6 +55,7 @@ final class AuthService
             'name' => $user['name'],
             'email' => $user['email'],
             'role' => $user['role'],
+            'credential_version' => hash('sha256', $user['password_hash']),
         ];
         $users->markLogin((int) $user['id']);
         (new ActivityRepository($this->db))->log((int) $user['id'], 'login', 'user', (int) $user['id'], 'Đăng nhập hệ thống');
@@ -67,7 +69,7 @@ final class AuthService
 
     public function registerReader(string $name, string $email, string $password, string $phone = ''): void
     {
-        if (strlen($password) > 72 || strlen($password) < 12 || !preg_match('/[A-Z]/', $password) ||
+        if (str_contains($password, "\0") || strlen($password) > 72 || strlen($password) < 12 || !preg_match('/[A-Z]/', $password) ||
             !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) {
             throw new RuntimeException('Mật khẩu cần tối thiểu 12 ký tự, gồm chữ hoa, chữ thường và chữ số.');
         }

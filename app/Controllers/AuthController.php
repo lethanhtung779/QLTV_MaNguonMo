@@ -20,7 +20,8 @@ final class AuthController extends Controller
         if (current_user()) {
             redirect($this->homeForRole((string) current_user()['role']));
         }
-        $this->render('auth/login', ['title' => 'Đăng nhập'], 'layouts/public');
+        $email = $_SESSION['_auth_email'] ?? ''; unset($_SESSION['_auth_email']);
+        $this->render('auth/login', ['title' => 'Đăng nhập', 'email' => $email], 'layouts/public');
     }
 
     public function login(): never
@@ -28,6 +29,7 @@ final class AuthController extends Controller
         validate_csrf();
         try { $email = mb_strtolower(request_string('email', 190, true)); }
         catch (InvalidArgumentException $e) { $this->fail($e->getMessage(), '/login'); }
+        $_SESSION['_auth_email'] = $email;
         $password = $_POST['password'] ?? '';
         if (!is_string($password)) {
             $this->fail('Vui lòng nhập email và mật khẩu hợp lệ.', '/login');
@@ -38,6 +40,7 @@ final class AuthController extends Controller
 
         try {
             $user = (new AuthService($this->db))->authenticate($email, $password);
+            unset($_SESSION['_auth_email']);
             $this->success('Đăng nhập thành công.', $this->homeForRole((string) $user['role']));
         } catch (PDOException $exception) {
             error_log('Login database error: ' . $exception->getMessage());
@@ -64,7 +67,9 @@ final class AuthController extends Controller
             $this->render('errors/404', ['title' => 'Không tìm thấy trang'], 'layouts/public');
             return;
         }
-        $this->render('auth/register', ['title' => 'Đăng ký độc giả'], 'layouts/public');
+        $fields = $_SESSION['_register_fields'] ?? []; unset($_SESSION['_register_fields']);
+        $existingAccount = (bool) ($_SESSION['_register_existing'] ?? false); unset($_SESSION['_register_existing']);
+        $this->render('auth/register', ['title' => 'Đăng ký độc giả', 'fields' => $fields, 'existingAccount' => $existingAccount], 'layouts/public');
     }
 
     public function register(): never
@@ -74,6 +79,10 @@ final class AuthController extends Controller
             $this->fail('Thư viện hiện không mở đăng ký trực tuyến.', '/register');
         }
 
+        $_SESSION['_register_fields'] = [];
+        foreach (['name' => 160, 'email' => 190, 'phone' => 32] as $field => $max) {
+            if (is_string($_POST[$field] ?? null)) $_SESSION['_register_fields'][$field] = mb_substr($_POST[$field], 0, $max);
+        }
         try {
             $name = request_string('name', 160, true);
             $email = mb_strtolower(request_string('email', 190, true));
@@ -92,7 +101,14 @@ final class AuthController extends Controller
             if (!hash_equals($password, $confirm)) {
                 throw new InvalidArgumentException('Mật khẩu xác nhận không khớp.');
             }
+            if ((new UserRepository($this->db))->findByEmail($email)) {
+                $_SESSION['_register_existing'] = true;
+                $_SESSION['_auth_email'] = $email;
+                $this->fail('Email này đã có tài khoản. Hãy đăng nhập bằng mật khẩu đã tạo trước đây; đăng ký lại không thay đổi mật khẩu.', '/register');
+            }
             (new AuthService($this->db))->registerReader($name, $email, $password, $phone);
+            unset($_SESSION['_register_fields']);
+            $_SESSION['_auth_email'] = $email;
             $this->success('Đăng ký thành công. Hãy đăng nhập để sử dụng thẻ thư viện.', '/login');
         } catch (PDOException $exception) {
             error_log('Reader registration database error: ' . $exception->getMessage());
@@ -113,6 +129,11 @@ final class AuthController extends Controller
 
     private function homeForRole(string $role): string
     {
-        return $role === 'reader' ? '/account' : '/admin';
+        if ($role==='reader') return '/account';
+        foreach (['/admin','/admin/loans','/admin/books','/admin/readers','/admin/fines','/admin/categories'] as $path) {
+            $permission=\Library\Core\Permissions::route('GET',$path);
+            if ($permission===null || can($permission)) return $path;
+        }
+        return '/profile';
     }
 }

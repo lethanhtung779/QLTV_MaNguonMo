@@ -16,3 +16,22 @@
 /storage/browser-qa/
 /storage/backups/
 /storage/*.zip
+
+/storage/*.log
+/storage/pdf-qa-deps/
+/storage/fresh-install/
+/storage/receipts-qa/
+/storage/*.php
+/storage/*.jpg
+/storage/*.webp
+/storage/*.html
+
+# Paper Haven local secrets / QA temporary output
+.env.*
+!.env.example
+scratch/
+storage/http_qa.json
+storage/backups/
+
+
+storage/doi_soat/

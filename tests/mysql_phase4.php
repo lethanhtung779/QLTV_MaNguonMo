@@ -155,6 +155,7 @@ try {
     )->fetchColumn();
     $assert($waiverCount > 0, 'Waivers persist their amount, reason, and operator in MySQL.');
 
+    $admin['credential_version'] = hash('sha256', (new UserRepository($db))->findById($adminId)['password_hash']);
     $_SESSION['user'] = $admin;
     $router = new Router();
     ob_start();
@@ -174,6 +175,7 @@ try {
     $statisticsPage = (string) ob_get_clean();
     $assert(str_contains($statisticsPage, 'Tải báo cáo CSV UTF-8') && str_contains($statisticsPage, 'Danh sách lượt mượn'), 'Statistics route renders date/status filters and CSV export.');
     $readerUser = $db->query('SELECT id, name, email, role FROM users WHERE id = ' . $userId)->fetch();
+    $readerUser['credential_version'] = hash('sha256', (new UserRepository($db))->findById($userId)['password_hash']);
     $_SESSION['user'] = $readerUser;
     ob_start();
     $router->dispatch('GET', '/account');
